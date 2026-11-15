@@ -13,7 +13,7 @@ export function BeforeAfterSlider() {
         <div className="relative z-10 w-full">
           <div className="flex flex-col xl:flex-row xl:items-center gap-2 text-red-400 font-bold mb-3 md:mb-4">
             <FileSpreadsheet size={18} className="shrink-0" />
-            <span className="text-[10px] md:text-xs tracking-wide leading-tight">6 HRS MANUAL</span>
+            <span className="text-[10px] md:text-xs tracking-wide leading-tight">MANUAL WORK</span>
           </div>
           
           {/* Mock Excel Rows */}
@@ -53,7 +53,7 @@ export function BeforeAfterSlider() {
         <div className="relative z-10 w-full">
           <div className="flex flex-col xl:flex-row xl:items-center gap-2 text-cyan-400 font-bold mb-3 md:mb-4">
             <BarChart3 size={18} className="shrink-0" />
-            <span className="text-[10px] md:text-xs tracking-wide leading-tight text-white">15 MINS AUTOMATED</span>
+            <span className="text-[10px] md:text-xs tracking-wide leading-tight text-white">AUTOMATED</span>
           </div>
           
           {/* Mock Glowing Bar Chart */}

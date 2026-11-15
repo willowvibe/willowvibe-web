@@ -36,7 +36,7 @@ export function Footer() {
               Your dedicated data engineering team. We eliminate data silos, automate complex pipelines, and build resilient cloud lakehouses.
             </p>
             <div className="flex items-center gap-3">
-              <a href="mailto:hello@willowvibe.com" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary/50 transition-all" aria-label="Email">
+              <a href="mailto:contact@willowvibe.com" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary/50 transition-all" aria-label="Email">
                 <Mail className="w-4 h-4" />
               </a>
               <a href="https://www.linkedin.com/company/willowvibe/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary/50 transition-all" aria-label="LinkedIn">
@@ -82,7 +82,7 @@ export function Footer() {
           <div className="flex flex-wrap items-center gap-4">
             <Link href="/privacy" className="text-gray-600 text-xs hover:text-gray-400 transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="text-gray-600 text-xs hover:text-gray-400 transition-colors">Terms of Service</Link>
-            <a href="mailto:hello@willowvibe.com" className="text-gray-600 text-xs hover:text-primary transition-colors font-mono">hello@willowvibe.com</a>
+            <a href="mailto:contact@willowvibe.com" className="text-gray-600 text-xs hover:text-primary transition-colors font-mono">contact@willowvibe.com</a>
           </div>
         </div>
       </div>

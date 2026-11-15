@@ -48,7 +48,7 @@ export function AnomalyDetectionVisual() {
 
       <div className="absolute bottom-4 right-4 flex items-center gap-2 text-cyan-400">
          <CheckCircle2 size={14} />
-         <span className="text-[10px] font-mono font-bold">LATENCY: 42ms</span>
+         <span className="text-[10px] font-mono font-bold">CHECKS PASSING</span>
       </div>
     </div>
   );
