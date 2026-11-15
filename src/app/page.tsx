@@ -1,17 +1,52 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Database, Server, Cloud, Cpu, Settings, RefreshCw, ClipboardCheck, Quote, ArrowRight, ChevronLeft, ChevronRight, ServerCog, Component, ShieldCheck, Box, Network, FolderOpen, Folder, FileCode2, FileJson, ChevronDown } from "lucide-react";
+import { Server, Quote, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { motion, AnimatePresence, useAnimationFrame, useMotionValue } from "framer-motion";
+import Image from "next/image";
+import { motion } from "framer-motion";
 import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
 import { DataStreamVisual } from "@/components/DataStreamVisual";
 import { AnomalyDetectionVisual } from "@/components/AnomalyDetectionVisual";
 
-const PROJECTS = [
-  { id: 1, title: "PLM Data Lake Migration", tags: ["AWS", "Snowflake", "dbt"], stat: "96% Time Saved", desc: "Migrated legacy product lifecycle management data into a unified lakehouse, drastically reducing reporting time.", visual: "slider" },
-  { id: 2, title: "Global Logistics Lakehouse", tags: ["Databricks", "Delta Lake", "Kafka"], stat: "5PB+ Data", desc: "Constructed a real-time streaming architecture resolving supply chain bottlenecks globally.", visual: "stream" },
-  { id: 3, title: "Fintech Fraud Detection", tags: ["Snowflake", "dbt", "Airflow"], stat: "< 50ms latency", desc: "Built an end-to-end data pipeline feeding ML models to detect anomalies in real-time.", visual: "anomaly" },
+type Project = {
+  id: number;
+  title: string;
+  tags: string[];
+  stat: string;
+  desc: string;
+  visual: string;
+  link: string;
+};
+
+const PROJECTS: Project[] = [
+  {
+    id: 1,
+    title: "ObservaKit",
+    tags: ["Postgres", "Prometheus", "Grafana"],
+    stat: "Open source",
+    desc: "Self-hosted data observability for small teams — freshness, volume and schema checks with Slack, Email, Discord, Teams and PagerDuty alerts.",
+    visual: "anomaly",
+    link: "https://github.com/willowvibe/ObservaKit",
+  },
+  {
+    id: 2,
+    title: "PipelineProbe",
+    tags: ["Airflow", "dbt", "PyPI"],
+    stat: "pip install pipelineprobe",
+    desc: "A one-command, read-only audit of Airflow, dbt and warehouse health that returns a 0–100 score, an HTML and JSON report, and a CI gate.",
+    visual: "stream",
+    link: "https://github.com/willowvibe/pipelineprobe",
+  },
+  {
+    id: 3,
+    title: "Enterprise PLM & data migration",
+    tags: ["Teamcenter", "3DEXPERIENCE", "dbt"],
+    stat: "Service",
+    desc: "A capability, not a client result: moving PLM and BOM data out of spreadsheets and into governed pipelines.",
+    visual: "slider",
+    link: "/services",
+  },
 ];
 
 const TESTIMONIALS = [
@@ -75,9 +110,11 @@ function CoreCapabilitiesIDE() {
           >
             {/* Illustration area */}
             <div className={`w-full flex items-center justify-center p-8 ${pillar.iconBg} border-b border-white/5`}>
-              <img
+              <Image
                 src={pillar.illustration}
                 alt={pillar.title}
+                width={160}
+                height={160}
                 className="w-40 h-40 object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.1)] group-hover:scale-105 transition-transform duration-500"
               />
             </div>
@@ -121,49 +158,56 @@ export default function Home() {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const displayProjects = Array(30).fill(PROJECTS).flat();
+  const [reduceMotion, setReduceMotion] = useState(false);
 
-  const getCardWidth = useCallback(() => {
-    if (!sliderRef.current) return 0;
-    const firstCard = sliderRef.current.firstElementChild as HTMLElement;
-    if (!firstCard) return 0;
-    return firstCard.offsetWidth + (window.innerWidth < 768 ? 0 : 16);
+  const getStep = useCallback(() => {
+    const scroller = sliderRef.current;
+    if (!scroller) return 0;
+    const first = scroller.firstElementChild as HTMLElement | null;
+    if (!first) return 0;
+    const styles = window.getComputedStyle(scroller);
+    const gap = parseFloat(styles.columnGap || styles.gap || "0") || 0;
+    return first.offsetWidth + gap;
   }, []);
 
-  const scrollToIndex = useCallback((targetDotIndex: number) => {
-    if (sliderRef.current) {
-      const cardWidth = getCardWidth();
-      const currentRawIndex = Math.round(sliderRef.current.scrollLeft / cardWidth);
-      const currentMod = currentRawIndex % PROJECTS.length;
-      let steps = targetDotIndex - currentMod;
-      if (steps < 0) steps += PROJECTS.length;
-      if (steps === 0) return;
-      sliderRef.current.scrollTo({ left: (currentRawIndex + steps) * cardWidth, behavior: "smooth" });
-      setActiveIndex(targetDotIndex);
-    }
-  }, [getCardWidth]);
+  const scrollToIndex = useCallback((index: number) => {
+    const scroller = sliderRef.current;
+    if (!scroller) return;
+    scroller.scrollTo({ left: index * getStep(), behavior: "smooth" });
+    setActiveIndex(index);
+  }, [getStep]);
 
-  const handleScroll = () => {
-    if (sliderRef.current) {
-      const cardWidth = getCardWidth();
-      setActiveIndex(Math.round(sliderRef.current.scrollLeft / cardWidth) % PROJECTS.length);
+  const handleScroll = useCallback(() => {
+    const scroller = sliderRef.current;
+    const step = getStep();
+    if (scroller && step > 0) {
+      setActiveIndex(Math.min(PROJECTS.length - 1, Math.round(scroller.scrollLeft / step)));
     }
-  };
+  }, [getStep]);
+
+  const goPrev = useCallback(() => {
+    scrollToIndex((activeIndex - 1 + PROJECTS.length) % PROJECTS.length);
+  }, [activeIndex, scrollToIndex]);
+
+  const goNext = useCallback(() => {
+    scrollToIndex((activeIndex + 1) % PROJECTS.length);
+  }, [activeIndex, scrollToIndex]);
 
   useEffect(() => {
-    if (isPaused || isDragging) return;
-    const interval = setInterval(() => {
-      sliderRef.current?.scrollBy({ left: getCardWidth(), behavior: "smooth" });
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [isPaused, isDragging, getCardWidth]);
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduceMotion(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
-  const startDragging = (e: React.MouseEvent) => { setIsDragging(true); setStartX(e.pageX - (sliderRef.current?.offsetLeft || 0)); setScrollLeft(sliderRef.current?.scrollLeft || 0); };
-  const stopInteracting = () => { setIsDragging(false); setIsPaused(false); };
-  const move = (e: React.MouseEvent) => { if (!isDragging || !sliderRef.current) return; e.preventDefault(); sliderRef.current.scrollLeft = scrollLeft - (e.pageX - (sliderRef.current.offsetLeft || 0) - startX) * 2; };
+  useEffect(() => {
+    if (isPaused || reduceMotion) return;
+    const interval = setInterval(() => {
+      scrollToIndex((activeIndex + 1) % PROJECTS.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [isPaused, reduceMotion, activeIndex, scrollToIndex]);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-neutral-950 text-white overflow-x-hidden selection:bg-cyan-400/30">
@@ -197,7 +241,7 @@ export default function Home() {
             
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
               className="text-sm md:text-lg text-gray-300 mb-6 md:mb-8 leading-relaxed font-light">
-              Your product data, your pipeline data, and your analytics data all live in different silos — and that's costing you. WillowVibe connects the dots. We engineer the systems that make your product lifecycle, data pipelines, and business intelligence work as one.
+              Your product data, your pipeline data, and your analytics data all live in different silos — and that&apos;s costing you. WillowVibe connects the dots. We engineer the systems that make your product lifecycle, data pipelines, and business intelligence work as one.
             </motion.p>
             
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }}>
@@ -213,10 +257,13 @@ export default function Home() {
             transition={{ duration: 0.9, delay: 0.3 }}
             className="w-full md:w-1/2 flex items-center justify-center"
           >
-            <img
+            <Image
               src="/hero-data-new.svg"
               alt="Data engineering illustration"
-              className="w-full max-w-xs md:max-w-md lg:max-w-lg drop-shadow-[0_0_30px_rgba(34,211,238,0.15)]"
+              width={1024}
+              height={1024}
+              priority
+              className="w-full h-auto max-w-xs md:max-w-md lg:max-w-lg drop-shadow-[0_0_30px_rgba(34,211,238,0.15)]"
             />
           </motion.div>
         </div>
@@ -245,28 +292,64 @@ export default function Home() {
       </section>
 
       {/* 5. FEATURED PROJECTS */}
-      <section className="w-full max-w-7xl mx-auto px-4 py-8 md:py-20 border-b border-white/5">
-        <div className="mb-6 md:mb-10 text-center md:text-left">
-          <h2 className="text-xl md:text-3xl font-extrabold mb-3 tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">Featured Projects</h2>
-          <div className="h-0.5 w-16 bg-cyan-400 mx-auto md:mx-0" />
+      <section
+        className="w-full max-w-7xl mx-auto px-4 py-8 md:py-20 border-b border-white/5"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onFocus={() => setIsPaused(true)}
+        onBlur={() => setIsPaused(false)}
+      >
+        <div className="mb-6 md:mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div className="text-center md:text-left">
+            <h2 className="text-xl md:text-3xl font-extrabold mb-3 tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">Featured Projects</h2>
+            <div className="h-0.5 w-16 bg-cyan-400 mx-auto md:mx-0" />
+          </div>
+          <div className="flex justify-center md:justify-end gap-2">
+            <button
+              type="button"
+              onClick={goPrev}
+              aria-label="Previous project"
+              className="w-10 h-10 rounded-full border border-neutral-600 bg-neutral-900 text-cyan-400 flex items-center justify-center hover:border-cyan-400 hover:scale-105 transition-all"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              type="button"
+              onClick={goNext}
+              aria-label="Next project"
+              className="w-10 h-10 rounded-full border border-neutral-600 bg-neutral-900 text-cyan-400 flex items-center justify-center hover:border-cyan-400 hover:scale-105 transition-all"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
         </div>
         <div className="relative">
-          <div ref={sliderRef} onScroll={handleScroll} onMouseDown={startDragging} onMouseUp={() => setIsDragging(false)}
-            onMouseLeave={stopInteracting} onMouseMove={move} onMouseEnter={() => setIsPaused(true)}
-            className={`flex overflow-x-auto gap-4 snap-x snap-mandatory py-2 md:px-[10%] ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
-            {displayProjects.map((project, idx) => (
-              <div key={`${project.id}-${idx}`} className="w-[calc(100vw-2rem)] md:w-auto md:min-w-[80%] flex-none snap-start md:snap-center shrink-0 pointer-events-none md:pointer-events-auto">
+          <div
+            ref={sliderRef}
+            onScroll={handleScroll}
+            className="flex overflow-x-auto gap-4 snap-x snap-mandatory py-2"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {PROJECTS.map((project) => (
+              <div
+                key={project.id}
+                className="w-[calc(100vw-2rem)] md:w-[48%] lg:w-[32%] flex-none snap-start md:snap-center"
+              >
                 <ProjectCard {...project} />
               </div>
             ))}
           </div>
         </div>
         <div className="flex justify-center gap-3 mt-6">
-          {PROJECTS.map((_, index) => (
-            <button key={index} onClick={() => scrollToIndex(index)}
+          {PROJECTS.map((project, index) => (
+            <button
+              key={project.id}
+              type="button"
+              onClick={() => scrollToIndex(index)}
               className={`h-2 transition-all duration-300 rounded-full ${activeIndex === index ? "w-8 bg-cyan-400" : "w-2 bg-white/30"}`}
-              aria-label={`Go to project ${index + 1}`} />
+              aria-label={`Go to project ${index + 1}: ${project.title}`}
+              aria-current={activeIndex === index}
+            />
           ))}
         </div>
       </section>
@@ -296,9 +379,11 @@ export default function Home() {
             </div>
           ))}
           <div className="flex flex-col items-center justify-center p-6 rounded-xl border border-dashed border-white/10 bg-white/[0.02] gap-4 text-center">
-            <img
+            <Image
               src="/endorse.svg"
               alt="More endorsements coming"
+              width={128}
+              height={128}
               className="w-32 h-32 object-contain opacity-70"
             />
             <p className="text-gray-400 text-sm leading-relaxed">
@@ -324,9 +409,11 @@ export default function Home() {
           {/* Coming soon block — spans 2 columns */}
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 }}
             className="md:col-span-2 relative rounded-xl border border-dashed border-white/10 bg-white/[0.02] flex flex-col items-center justify-center p-8 gap-5 text-center">
-            <img
+            <Image
               src="/endorse.svg"
               alt="More endorsements coming"
+              width={192}
+              height={192}
               className="w-48 h-48 object-contain opacity-70"
             />
             <p className="text-gray-300 text-base font-medium leading-relaxed max-w-sm">
@@ -340,10 +427,23 @@ export default function Home() {
   );
 }
 
-function ProjectCard({ title, tags, stat, desc, visual }: { title: string; tags: string[]; stat: string; desc: string; visual: string }) {
+function ProjectCard({ title, tags, stat, desc, visual, link }: Project) {
+  const isExternal = link.startsWith("http");
+  const linkProps = isExternal
+    ? { target: "_blank", rel: "noopener noreferrer" }
+    : {};
+
   return (
-    <div className="group relative p-4 md:p-6 h-full flex flex-col bg-neutral-800 border border-neutral-600 rounded-xl hover:border-cyan-400 transition-all duration-500 select-none">
-      <h3 className="text-lg md:text-2xl font-bold mb-2 md:mb-3 text-white group-hover:text-cyan-400 transition-colors">{title}</h3>
+    <div className="group relative p-4 md:p-6 h-full flex flex-col bg-neutral-800 border border-neutral-600 rounded-xl hover:border-cyan-400 transition-all duration-500">
+      <h3 className="text-lg md:text-2xl font-bold mb-2 md:mb-3 text-white">
+        <Link
+          href={link}
+          {...linkProps}
+          className="hover:text-cyan-400 transition-colors"
+        >
+          {title}
+        </Link>
+      </h3>
       <p className="text-sm md:text-base text-gray-300 mb-4 flex-grow leading-relaxed">{desc}</p>
       <div className="mb-4">
         {visual === "slider" && <BeforeAfterSlider />}
@@ -352,8 +452,15 @@ function ProjectCard({ title, tags, stat, desc, visual }: { title: string; tags:
       </div>
       <div className="pt-4 border-t border-neutral-600 flex flex-wrap gap-2 items-center justify-between">
         <div className="flex flex-wrap gap-2">{tags.map((tag) => (<span key={tag} className="text-xs font-mono px-2 py-1 rounded bg-black/60 border border-neutral-500 text-cyan-400">{tag}</span>))}</div>
-        <div className="font-mono text-xs text-cyan-300 font-bold bg-black/40 px-3 py-1 rounded border border-neutral-600">METRIC: {stat}</div>
+        <div className="font-mono text-xs text-cyan-300 font-bold bg-black/40 px-3 py-1 rounded border border-neutral-600">STATUS: {stat}</div>
       </div>
+      <Link
+        href={link}
+        {...linkProps}
+        className="mt-4 inline-flex items-center gap-2 text-xs font-mono font-bold text-cyan-400 hover:gap-3 transition-all"
+      >
+        {isExternal ? "View project" : "Learn more"} <ArrowRight size={12} />
+      </Link>
     </div>
   );
 }

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 function AnimatedLine({ color, vertical = true }: { color: string; vertical?: boolean }) {
@@ -111,7 +112,7 @@ const TREE = [
       {
         id: "dta-1",
         title: "Data Quality",
-        desc: "Deploy automated testing frameworks and AI-driven anomaly detection to ensure 100% data reliability before it ever reaches production environments. Comprehensive monitoring across your ecosystem with proactive alerts and circuit breakers."
+        desc: "Deploy automated testing frameworks and AI-driven anomaly detection to catch bad data before it reaches production. Comprehensive monitoring across your ecosystem with proactive alerts and circuit breakers."
       },
       {
         id: "dta-2",
@@ -140,6 +141,20 @@ const TREE = [
 export default function ServicesPage() {
   const [selected, setSelected] = useState<{ title: string; desc: string } | null>(null);
 
+  useEffect(() => {
+    if (!selected) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelected(null);
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [selected]);
+
   return (
     <div className="flex flex-col items-center min-h-screen bg-black text-white overflow-x-hidden">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-20">
@@ -155,10 +170,13 @@ export default function ServicesPage() {
               transition={{ duration: 0.8, delay: 0.1 }}
               className="w-full flex items-center justify-center lg:justify-start mb-6"
             >
-              <img
+              <Image
                 src="/core.svg"
                 alt="Core engineering capabilities"
-                className="w-48 md:w-56 lg:w-64 object-contain drop-shadow-[0_0_25px_rgba(34,211,238,0.15)] opacity-90"
+                width={256}
+                height={256}
+                unoptimized
+                className="w-48 md:w-56 lg:w-64 h-auto object-contain drop-shadow-[0_0_25px_rgba(34,211,238,0.15)] opacity-90"
               />
             </motion.div>
             <motion.h1
@@ -175,7 +193,7 @@ export default function ServicesPage() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="text-gray-300 text-sm md:text-base leading-relaxed max-w-sm"
             >
-              Cutting-edge distributed systems with robust engineering to deliver platforms that scale infinitely.
+              Cutting-edge distributed systems with robust engineering designed to scale with your business.
             </motion.p>
           </div>
 
@@ -293,14 +311,17 @@ export default function ServicesPage() {
               className="absolute inset-0 bg-black/80 backdrop-blur-md" />
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="service-modal-title"
               className="relative w-full max-w-2xl bg-neutral-900 border border-white/10 rounded-2xl shadow-2xl p-6 md:p-8 overflow-hidden z-10">
-              <button onClick={() => setSelected(null)}
+              <button onClick={() => setSelected(null)} aria-label="Close"
                 className="absolute top-4 right-4 p-2 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
                 <X size={20} />
               </button>
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/5 to-transparent pointer-events-none" />
               <div className="relative z-10">
-                <h2 className="text-xl md:text-2xl font-bold text-white mb-4 pr-8 leading-tight">{selected.title}</h2>
+                <h2 id="service-modal-title" className="text-xl md:text-2xl font-bold text-white mb-4 pr-8 leading-tight">{selected.title}</h2>
                 <div className="py-4 border-y border-white/10 text-gray-300 text-sm leading-relaxed space-y-3 max-h-[50vh] overflow-y-auto">
                   {selected.desc.split('\n').map((line, i) => (
                     <p key={i} className="flex items-start gap-2">

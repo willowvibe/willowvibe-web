@@ -1,9 +1,12 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, X } from "lucide-react";
+
+const MotionImage = motion(Image);
 
 const TEAM = [
   {
@@ -127,9 +130,25 @@ function BubbleCard({ member, size = "md" }: { member: typeof TEAM[0]; size?: "m
   const t = THEME[member.theme];
   const diameter = size === "lg" ? 220 : 190;
 
+  useEffect(() => {
+    if (!showBio) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowBio(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [showBio]);
+
   return (
     <>
-      <motion.div
+      <motion.button
+        type="button"
+        aria-label={`View bio for ${member.name}`}
         animate={{ y: [0, -14, 0] }}
         transition={{
           duration: member.floatDuration,
@@ -169,7 +188,7 @@ function BubbleCard({ member, size = "md" }: { member: typeof TEAM[0]; size?: "m
           </div>
           <p className={`text-[8px] font-mono ${t.text} mt-1 opacity-70`}>tap for more</p>
         </div>
-      </motion.div>
+      </motion.button>
 
       {/* Bio popup */}
       {showBio && (
@@ -182,15 +201,19 @@ function BubbleCard({ member, size = "md" }: { member: typeof TEAM[0]; size?: "m
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: "spring", bounce: 0, duration: 0.4 }}
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={`bio-title-${member.id}`}
             className={`relative w-full max-w-sm p-6 rounded-3xl bg-neutral-900 border-2 ${t.border} ${t.glow} z-10 flex flex-col gap-3`}
           >
             <button
               onClick={() => setShowBio(false)}
+              aria-label="Close"
               className="absolute top-4 right-4 p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
             >
               <X size={16} />
             </button>
-            <h3 className="text-white font-extrabold text-lg">{member.name}</h3>
+            <h3 id={`bio-title-${member.id}`} className="text-white font-extrabold text-lg">{member.name}</h3>
             <p className={`text-sm font-bold bg-gradient-to-r ${t.gradient} bg-clip-text text-transparent`}>
               {member.role} — {member.focus}
             </p>
@@ -263,9 +286,12 @@ export default function AboutPage() {
 
           {/* Center illustration */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-            <motion.img
+            <MotionImage
               src="/team-3.svg"
               alt="WillowVibe team"
+              width={288}
+              height={288}
+              unoptimized
               className="w-72 h-72 object-contain drop-shadow-[0_0_30px_rgba(34,211,238,0.15)]"
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -314,9 +340,12 @@ export default function AboutPage() {
 
         {/* Mobile stacked */}
         <div className="md:hidden flex flex-col items-center gap-8 mb-12">
-          <motion.img
+          <MotionImage
             src="/team-3.svg"
             alt="WillowVibe team"
+            width={224}
+            height={224}
+            unoptimized
             className="w-56 h-56 object-contain"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}

@@ -1,18 +1,55 @@
 import * as nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
 
-// 1. Fully swapped to Hostinger's mail courier (No Gmail)
-const transporter = nodemailer.createTransport({
-    host: "smtp.hostinger.com",
-    port: 465,
-    secure: true,
-    auth: { 
-        user: process.env.HOSTINGER_USER, 
-        pass: process.env.HOSTINGER_PASSWORD 
-    },
-});
+const LIMITS = {
+    name: 100,
+    email: 254,
+    phone: 40,
+    message: 5000,
+} as const;
 
-function buildHtml(name: string, email: string, phone: string, message: string) {
+let transporter: nodemailer.Transporter | null = null;
+
+function getTransporter(): nodemailer.Transporter | null {
+    const user = process.env.HOSTINGER_USER;
+    const pass = process.env.HOSTINGER_PASSWORD;
+
+    if (!user || !pass) {
+        console.error("HOSTINGER_USER or HOSTINGER_PASSWORD is not configured");
+        return null;
+    }
+
+    if (!transporter) {
+        transporter = nodemailer.createTransport({
+            host: "smtp.hostinger.com",
+            port: 465,
+            secure: true,
+            auth: { user, pass },
+        });
+    }
+
+    return transporter;
+}
+
+function escapeHtml(value: string): string {
+    return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function stripNewlines(value: string): string {
+    return value.replace(/[\r\n]+/g, " ").trim();
+}
+
+function buildHtml(rawName: string, rawEmail: string, rawPhone: string, rawMessage: string) {
+    const name = escapeHtml(rawName);
+    const email = escapeHtml(rawEmail);
+    const phone = escapeHtml(rawPhone);
+    const message = escapeHtml(rawMessage);
+
     return `<div style="font-family:'Segoe UI',sans-serif;max-width:600px;margin:0 auto;background:#0a0a0a;color:#eaeaea;border-radius:12px;overflow:hidden;border:1px solid #1a1a1a;">
     <div style="background:linear-gradient(135deg,#00f0ff10,#7000ff10);border-bottom:1px solid #00f0ff30;padding:28px 36px;">
       <p style="color:#00f0ff;font-family:monospace;font-size:11px;letter-spacing:3px;margin:0 0 6px;text-transform:uppercase;">New Contact Form Inquiry</p>
@@ -32,24 +69,64 @@ function buildHtml(name: string, email: string, phone: string, message: string) 
 }
 
 export async function POST(request: Request) {
+    let body: unknown;
+
     try {
-        const body = await request.json();
-        const { name, email, phone, message } = body;
-        
-        if (!name || !email || !message) return NextResponse.json({ error: "Name, email and message are required." }, { status: 400 });
-        
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) return NextResponse.json({ error: "Please provide a valid email address." }, { status: 400 });
-        
-        // 2. Updated to point to your Hostinger environment variables
-        await transporter.sendMail({
-            from: `"WillowVibe Website" <${process.env.HOSTINGER_USER}>`, 
-            to: process.env.HOSTINGER_USER, 
-            replyTo: email,
-            subject: `New Inquiry from ${name} — WillowVibe`,
-            html: buildHtml(name, email, phone ?? "", message),
+        body = await request.json();
+    } catch {
+        return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    }
+
+    if (!body || typeof body !== "object") {
+        return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+    }
+
+    const { name, email, phone = "", message } = body as Record<string, unknown>;
+
+    if (typeof name !== "string" || typeof email !== "string" || typeof phone !== "string" || typeof message !== "string") {
+        return NextResponse.json({ error: "Name, email and message must be strings." }, { status: 400 });
+    }
+
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedMessage = message.trim();
+
+    if (!trimmedName || !trimmedEmail || !trimmedMessage) {
+        return NextResponse.json({ error: "Name, email and message are required." }, { status: 400 });
+    }
+
+    if (
+        trimmedName.length > LIMITS.name ||
+        trimmedEmail.length > LIMITS.email ||
+        trimmedPhone.length > LIMITS.phone ||
+        trimmedMessage.length > LIMITS.message
+    ) {
+        return NextResponse.json({ error: "One or more fields exceed the maximum length." }, { status: 400 });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+        return NextResponse.json({ error: "Please provide a valid email address." }, { status: 400 });
+    }
+
+    const mailer = getTransporter();
+    if (!mailer) {
+        return NextResponse.json(
+            { error: "Email service is not configured. Please email us directly at contact@willowvibe.com" },
+            { status: 500 }
+        );
+    }
+
+    try {
+        await mailer.sendMail({
+            from: `"WillowVibe Website" <${process.env.HOSTINGER_USER}>`,
+            to: process.env.HOSTINGER_USER,
+            replyTo: trimmedEmail,
+            subject: `New Inquiry from ${stripNewlines(trimmedName)} — WillowVibe`,
+            html: buildHtml(trimmedName, trimmedEmail, trimmedPhone, trimmedMessage),
         });
-        
+
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error("Email error:", error);

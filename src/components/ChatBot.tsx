@@ -15,6 +15,9 @@ const WELCOME: Message = {
   text: "Hi! I am the WillowVibe AI assistant. Ask me anything about our services, products, team, or how we can help you.",
 };
 
+const FALLBACK =
+  "I am having trouble connecting right now. Please email us at contact@willowvibe.com";
+
 export function ChatBot() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([WELCOME]);
@@ -22,13 +25,26 @@ export function ChatBot() {
   const [loading, setLoading] = useState(false);
   const [unread, setUnread] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const openRef = useRef(open);
+
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
 
   useEffect(() => {
     if (open) {
-      setUnread(0);
       setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
     }
   }, [open, messages]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [open]);
 
   const send = async () => {
     const text = input.trim();
@@ -41,7 +57,7 @@ export function ChatBot() {
 
     try {
       const conversationHistory = messages
-        .filter((m) => m.from === "user" || m.from === "bot")
+        .filter((m) => m !== WELCOME)
         .map((m) => ({
           role: m.from === "user" ? "user" : "assistant",
           content: m.text,
@@ -58,22 +74,18 @@ export function ChatBot() {
         }),
       });
 
-      const data = await response.json();
-      const reply =
-        data?.reply ??
-        "I am having trouble connecting right now. Please email us at contact@willowvibe.com";
+      const data = await response.json().catch(() => null);
+      const reply = response.ok && typeof data?.reply === "string" ? data.reply : FALLBACK;
 
       const botMsg: Message = { from: "bot", text: reply };
       setMessages((prev) => [...prev, botMsg]);
-      if (!open) setUnread((n) => n + 1);
+      if (!openRef.current) setUnread((n) => n + 1);
     } catch {
       setMessages((prev) => [
         ...prev,
-        {
-          from: "bot",
-          text: "I am having trouble connecting right now. Please email us at contact@willowvibe.com",
-        },
+        { from: "bot", text: FALLBACK },
       ]);
+      if (!openRef.current) setUnread((n) => n + 1);
     } finally {
       setLoading(false);
     }
@@ -104,13 +116,18 @@ export function ChatBot() {
               </div>
               <button
                 onClick={() => setOpen(false)}
+                aria-label="Close chat"
                 className="text-gray-500 hover:text-white transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            <div
+              className="flex-1 overflow-y-auto p-4 space-y-3"
+              aria-live="polite"
+              role="log"
+            >
               {messages.map((msg, i) => (
                 <div
                   key={i}
@@ -157,12 +174,14 @@ export function ChatBot() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKey}
                 placeholder="Ask anything about WillowVibe..."
+                aria-label="Type your message"
                 disabled={loading}
                 className="flex-1 bg-neutral-800 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-gray-600 outline-none focus:border-cyan-400/50 transition-colors disabled:opacity-50"
               />
               <button
                 onClick={send}
                 disabled={loading}
+                aria-label="Send message"
                 className="w-9 h-9 rounded-lg bg-cyan-400 text-black flex items-center justify-center hover:bg-cyan-300 transition-colors flex-shrink-0 disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
@@ -173,7 +192,7 @@ export function ChatBot() {
       )}
 
       <button
-        onClick={() => setOpen((p) => !p)}
+        onClick={() => { setUnread(0); setOpen((p) => !p); }}
         className="fixed bottom-5 right-4 md:right-6 z-50 w-[52px] h-[52px] rounded-full bg-cyan-400 text-black shadow-[0_0_20px_rgba(34,211,238,0.4)] flex items-center justify-center hover:scale-110 transition-all"
         aria-label="Open chat"
       >
