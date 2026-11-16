@@ -276,6 +276,18 @@ export default function ServicesPage() {
 
                         </div>
                       ))}
+
+                      {category.id === "plm" && (
+                        <a
+                          href="https://willowvibe.github.io/plm-bom-pipeline/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-blue-500/40 px-3 py-2 text-[11px] font-mono leading-snug text-blue-300 transition-colors hover:border-blue-400 hover:text-blue-200"
+                        >
+                          See a working BOM &amp; change-control pipeline
+                          <ArrowRight size={10} aria-hidden="true" />
+                        </a>
+                      )}
                     </div>
 
                   </div>
