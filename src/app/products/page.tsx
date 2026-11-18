@@ -82,6 +82,58 @@ const PRODUCTS: Product[] = [
   },
   {
     id: 3,
+    name: "rag-docs-chatbot",
+    tagline: "Answers from your documents, with the exact page cited.",
+    description: "A retrieval-augmented chatbot over public NIST digital-identity guidelines (SP 800-63B / 800-63-4) that answers with [n] citations to the source page, or says it doesn't know. Built with FastAPI and Postgres pgvector using local BGE embeddings, with optional hybrid search and reranking, and scored on a 40-question evaluation.",
+    illustration: "/ragdocs.webp",
+    category: "AI Document Search",
+    badge: "Free and Open Source",
+    status: "Live",
+    statusColor: "bg-emerald-500",
+    accent: "from-white/10 to-sky-950/60",
+    border: "border-sky-500/30",
+    glow: "shadow-[0_0_40px_rgba(14,165,233,0.08)]",
+    titleGradient: "from-sky-400 to-blue-400",
+    tagColor: "bg-sky-950/50 border-sky-500/40 text-sky-300",
+    ctaColor: "bg-sky-400 hover:bg-sky-300 text-black",
+    cta: { label: "Try the Live Demo", href: "https://rag-docs-chatbot-three.vercel.app" },
+    highlights: [
+      "Every answer cites the source document and page",
+      "Says \"I don't know\" instead of guessing",
+      "87.5% of questions retrieve the right passage in the top 5 (40-question eval)",
+      "Hybrid search and a cross-encoder reranker, switchable by flag",
+      "Self-host with Docker Compose and bring your own model key",
+    ],
+    tags: ["RAG", "pgvector", "FastAPI", "PostgreSQL", "LLM", "Python"],
+  },
+  {
+    id: 4,
+    name: "plm-bom-pipeline",
+    tagline: "PLM exports to tested BOM and change-control analytics in one command.",
+    description: "A synthetic bicycle manufacturer's PLM data (parts, revisions, five-level BOMs, ECR → ECO → ECN change control) generated deterministically and modelled by dbt on DuckDB into seven tested marts, with a self-contained HTML report.",
+    illustration: "/analytics.svg",
+    category: "PLM Analytics",
+    badge: "Free and Open Source",
+    status: "Live",
+    statusColor: "bg-emerald-500",
+    accent: "from-white/10 to-teal-950/60",
+    border: "border-teal-500/30",
+    glow: "shadow-[0_0_40px_rgba(20,184,166,0.08)]",
+    titleGradient: "from-teal-400 to-emerald-400",
+    tagColor: "bg-teal-950/50 border-teal-500/40 text-teal-300",
+    ctaColor: "bg-teal-400 hover:bg-teal-300 text-black",
+    cta: { label: "Get Started", href: "https://github.com/willowvibe/plm-bom-pipeline", github: true },
+    highlights: [
+      "Recursive BOM explosion with cost and weight rollups",
+      "ECO cycle times and cross-product change impact",
+      "195 data-quality checks; seeded defects each fail one named test",
+      "PLM to ERP BOM reconciliation",
+      "Static report and dbt docs — no server to run",
+    ],
+    tags: ["dbt", "DuckDB", "Python", "PLM", "BOM"],
+  },
+  {
+    id: 5,
     name: "Doctor App",
     tagline: "Complete patient management for independent doctors.",
     description: "Built for doctors who do home visits and clinic consultations. Doctor App gives independent practitioners a clean, fast way to manage patient records, track vitals, log visit notes, store documents and maintain full history across every patient interaction. Authentication and backend fully maintained by WillowVibe.",
@@ -108,7 +160,7 @@ const PRODUCTS: Product[] = [
     tags: ["Healthcare", "Multi-platform", "Authentication", "Backend", "Mobile"],
   },
   {
-    id: 4,
+    id: 6,
     name: "Cosmic Saju",
     tagline: "Korean Four Pillars readings, reviewed by a person.",
     description: "A web app that calculates a Korean Saju (Four Pillars) birth chart, gives a free snapshot, and sells paid reports that a human reviews before delivery. Built and maintained by WillowVibe.",
@@ -133,7 +185,7 @@ const PRODUCTS: Product[] = [
     tags: ["Web App", "Astrology", "Korean Saju", "Client Work"],
   },
   {
-    id: 5,
+    id: 7,
     name: "Dikshithra Atelier",
     tagline: "Online store for everyday ethnic and office wear.",
     description: "An e-commerce storefront for kurtis, kurti sets, salwars and office wear. Built by WillowVibe.",
@@ -158,6 +210,130 @@ const PRODUCTS: Product[] = [
     tags: ["E-commerce", "Web", "Client Work"],
   },
 ];
+
+function ProductCard({
+  product,
+  index,
+  onSelect,
+}: {
+  product: Product;
+  index: number;
+  onSelect: (product: Product) => void;
+}) {
+  const isSvg = product.illustration.endsWith(".svg");
+  return (
+    <motion.button
+      type="button"
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      onClick={() => onSelect(product)}
+      aria-label={`Open details for ${product.name}`}
+      className={`group relative flex flex-col text-left rounded-2xl bg-neutral-900 border ${product.border} ${product.glow} transition-all duration-500 overflow-hidden hover:-translate-y-2 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400`}
+    >
+      {/* Status badge */}
+      <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/60 border border-white/10 text-[10px] font-mono text-gray-300">
+        <div className={`w-1.5 h-1.5 rounded-full ${product.statusColor} ${product.status === "In Development" ? "animate-pulse" : ""}`} />
+        {product.status}
+      </div>
+
+      {/* Badge */}
+      <div className="absolute top-3 left-3 z-10 px-2 py-1 rounded-full bg-black/60 border border-white/10 text-[10px] font-mono text-gray-300">
+        {product.badge}
+      </div>
+
+      {/* Illustration area */}
+      <div className={`w-full flex items-center justify-center p-6 bg-gradient-to-br ${product.accent} border-b border-white/5`}>
+        <Image
+          src={product.illustration}
+          alt={product.name}
+          width={128}
+          height={128}
+          unoptimized={isSvg}
+          className="w-32 h-32 object-contain group-hover:scale-105 transition-transform duration-500"
+        />
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col flex-grow p-5 gap-3">
+        <span className={`text-[10px] font-mono tracking-widest ${product.tagColor.split(" ").find(c => c.startsWith("text-")) ?? "text-cyan-300"}`}>
+          {product.category}
+        </span>
+        <h3 className={`text-lg font-extrabold tracking-tight bg-gradient-to-r ${product.titleGradient} bg-clip-text text-transparent leading-tight`}>
+          {product.name}
+        </h3>
+        <p className="text-gray-400 text-xs leading-relaxed flex-grow">
+          {product.tagline}
+        </p>
+
+        {/* Animated arrow */}
+        <span
+          className={`mt-2 flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-xl border-2 ${product.tagColor} group-hover:scale-105 transition-all duration-300 w-full justify-center`}
+        >
+          <span>Explore Product</span>
+          <motion.span
+            animate={{ x: [0, 5, 0] }}
+            transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <ArrowRight size={13} />
+          </motion.span>
+        </span>
+      </div>
+
+      {/* Bottom glow line */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+    </motion.button>
+  );
+}
+
+function ProductSection({
+  title,
+  subtitle,
+  products,
+  onSelect,
+}: {
+  title: string;
+  subtitle: string;
+  products: Product[];
+  onSelect: (product: Product) => void;
+}) {
+  return (
+    <section className="mb-16 md:mb-20">
+      <div className="mb-6 md:mb-8">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-2xl md:text-3xl font-extrabold tracking-tight"
+        >
+          {title}
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-gray-400 text-sm md:text-base mt-2"
+        >
+          {subtitle}
+        </motion.p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {products.map((product, idx) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            index={idx}
+            onSelect={onSelect}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export default function ProductsPage() {
   const [selected, setSelected] = useState<Product | null>(null);
@@ -216,77 +392,21 @@ export default function ProductsPage() {
           </motion.div>
         </div>
 
-        {/* Product cards grid — same style as core capabilities */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PRODUCTS.map((product, idx) => {
-            const isSvg = product.illustration.endsWith(".svg");
-            return (
-              <motion.button
-                type="button"
-                key={product.id}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                onClick={() => setSelected(product)}
-                aria-label={`Open details for ${product.name}`}
-                className={`group relative flex flex-col text-left rounded-2xl bg-neutral-900 border ${product.border} ${product.glow} transition-all duration-500 overflow-hidden hover:-translate-y-2 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400`}
-              >
-                {/* Status badge */}
-                <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/60 border border-white/10 text-[10px] font-mono text-gray-300">
-                  <div className={`w-1.5 h-1.5 rounded-full ${product.statusColor} ${product.status === "In Development" ? "animate-pulse" : ""}`} />
-                  {product.status}
-                </div>
+        {/* Open-source tools */}
+        <ProductSection
+          title="Open-source tools"
+          subtitle="Free, self-hostable tools we build and maintain in the open."
+          products={PRODUCTS.filter((product) => product.badge === "Free and Open Source")}
+          onSelect={setSelected}
+        />
 
-                {/* Badge */}
-                <div className="absolute top-3 left-3 z-10 px-2 py-1 rounded-full bg-black/60 border border-white/10 text-[10px] font-mono text-gray-300">
-                  {product.badge}
-                </div>
-
-                {/* Illustration area */}
-                <div className={`w-full flex items-center justify-center p-6 bg-gradient-to-br ${product.accent} border-b border-white/5`}>
-                  <Image
-                    src={product.illustration}
-                    alt={product.name}
-                    width={128}
-                    height={128}
-                    unoptimized={isSvg}
-                    className="w-32 h-32 object-contain group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-
-                {/* Content */}
-                <div className="flex flex-col flex-grow p-5 gap-3">
-                  <span className={`text-[10px] font-mono tracking-widest ${product.tagColor.split(" ").find(c => c.startsWith("text-")) ?? "text-cyan-300"}`}>
-                    {product.category}
-                  </span>
-                  <h3 className={`text-lg font-extrabold tracking-tight bg-gradient-to-r ${product.titleGradient} bg-clip-text text-transparent leading-tight`}>
-                    {product.name}
-                  </h3>
-                  <p className="text-gray-400 text-xs leading-relaxed flex-grow">
-                    {product.tagline}
-                  </p>
-
-                  {/* Animated arrow */}
-                  <span
-                    className={`mt-2 flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-xl border-2 ${product.tagColor} group-hover:scale-105 transition-all duration-300 w-full justify-center`}
-                  >
-                    <span>Explore Product</span>
-                    <motion.span
-                      animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                      <ArrowRight size={13} />
-                    </motion.span>
-                  </span>
-                </div>
-
-                {/* Bottom glow line */}
-                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </motion.button>
-            );
-          })}
-        </div>
+        {/* Client work */}
+        <ProductSection
+          title="Client work"
+          subtitle="Products we build and run for our clients."
+          products={PRODUCTS.filter((product) => product.badge === "Client Project")}
+          onSelect={setSelected}
+        />
 
         {/* Bottom CTA */}
         <motion.div
