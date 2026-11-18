@@ -288,6 +288,18 @@ export default function ServicesPage() {
                           <ArrowRight size={10} aria-hidden="true" />
                         </a>
                       )}
+
+                      {category.id === "dta" && (
+                        <a
+                          href="https://rag-docs-chatbot-three.vercel.app"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-purple-500/40 px-3 py-2 text-[11px] font-mono leading-snug text-purple-300 transition-colors hover:border-purple-400 hover:text-purple-200"
+                        >
+                          See a cited-answer RAG demo
+                          <ArrowRight size={10} aria-hidden="true" />
+                        </a>
+                      )}
                     </div>
 
                   </div>
