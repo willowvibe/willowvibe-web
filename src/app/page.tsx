@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
 import { DataStreamVisual } from "@/components/DataStreamVisual";
 import { AnomalyDetectionVisual } from "@/components/AnomalyDetectionVisual";
+import { CitationVisual } from "@/components/CitationVisual";
 
 type Project = {
   id: number;
@@ -40,6 +41,15 @@ const PROJECTS: Project[] = [
   },
   {
     id: 3,
+    title: "rag-docs-chatbot",
+    tags: ["pgvector", "FastAPI", "RAG"],
+    stat: "Live demo",
+    desc: "Ask questions of a document set and get answers that cite the exact page — or an explicit \"I don't know\". Hybrid search, reranking and a 40-question evaluation.",
+    visual: "citation",
+    link: "https://rag-docs-chatbot-three.vercel.app",
+  },
+  {
+    id: 4,
     title: "Enterprise PLM & data migration",
     tags: ["Teamcenter", "3DEXPERIENCE", "dbt"],
     stat: "Service",
@@ -449,6 +459,7 @@ function ProjectCard({ title, tags, stat, desc, visual, link }: Project) {
         {visual === "slider" && <BeforeAfterSlider />}
         {visual === "stream" && <DataStreamVisual />}
         {visual === "anomaly" && <AnomalyDetectionVisual />}
+        {visual === "citation" && <CitationVisual />}
       </div>
       <div className="pt-4 border-t border-neutral-600 flex flex-wrap gap-2 items-center justify-between">
         <div className="flex flex-wrap gap-2">{tags.map((tag) => (<span key={tag} className="text-xs font-mono px-2 py-1 rounded bg-black/60 border border-neutral-500 text-cyan-400">{tag}</span>))}</div>

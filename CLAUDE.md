@@ -58,6 +58,7 @@ These must also be configured in the Vercel dashboard under Project Settings →
 - Project visuals rendered in the home page featured-projects carousel:
   - `src/components/AnomalyDetectionVisual.tsx` — ObservaKit (data observability)
   - `src/components/DataStreamVisual.tsx` — PipelineProbe (pipeline audit)
+  - `src/components/CitationVisual.tsx` — rag-docs-chatbot (cited-answer RAG)
   - `src/components/BeforeAfterSlider.tsx` — Enterprise PLM & data migration (service)
 
 ### Styling
