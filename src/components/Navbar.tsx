@@ -37,24 +37,24 @@ export function Navbar() {
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-1">
             {NAV_LINKS.map((link) => (
               <Link key={link.href} href={link.href}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${link.cta ? "bg-primary text-black font-bold hover:bg-primary/90" : pathname === link.href ? "text-primary bg-primary/10 border border-primary/20" : "text-gray-300 hover:text-primary hover:bg-white/5"}`}>
+                className={`flex items-center gap-2 whitespace-nowrap px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${link.cta ? "bg-primary text-black font-bold hover:bg-primary/90" : pathname === link.href ? "text-primary bg-primary/10 border border-primary/20" : "text-gray-300 hover:text-primary hover:bg-white/5"}`}>
                 {link.icon}{link.label}
               </Link>
             ))}
           </div>
 
           <button onClick={() => setMobileOpen((p) => !p)}
-            className="md:hidden p-2 rounded-md text-gray-400 hover:text-primary hover:bg-white/5 transition-colors" aria-label="Toggle menu">
+            className="lg:hidden p-2 rounded-md text-gray-400 hover:text-primary hover:bg-white/5 transition-colors" aria-label="Toggle menu">
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden bg-neutral-900 border-t border-white/10 px-4 pb-4 pt-3 flex flex-col gap-1.5">
+        <div className="lg:hidden bg-neutral-900 border-t border-white/10 px-4 pb-4 pt-3 flex flex-col gap-1.5">
           {NAV_LINKS.map((link) => (
             <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${link.cta ? "bg-primary text-black font-bold hover:bg-primary/90" : pathname === link.href ? "bg-primary/10 text-primary border border-primary/30" : "text-gray-200 hover:text-primary hover:bg-white/5"}`}>
