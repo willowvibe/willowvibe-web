@@ -2,12 +2,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Database, Home, Info, Mail, Menu, X, Package } from "lucide-react";
+import { Database, Home, Info, Mail, Menu, X, Package, Briefcase } from "lucide-react";
 
-const NAV_LINKS = [
+type NavLink = {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  cta?: boolean;
+};
+
+const NAV_LINKS: NavLink[] = [
   { href: "/", label: "Home", icon: <Home className="w-4 h-4" /> },
   { href: "/services", label: "Services", icon: <Database className="w-4 h-4" /> },
   { href: "/products", label: "Products", icon: <Package className="w-4 h-4" /> },
+  { href: "/work-with-us", label: "Work with us", icon: <Briefcase className="w-4 h-4" />, cta: true },
   { href: "/about", label: "About Us", icon: <Info className="w-4 h-4" /> },
   { href: "/contact", label: "Contact", icon: <Mail className="w-4 h-4" /> },
 ];
@@ -32,7 +40,7 @@ export function Navbar() {
           <div className="hidden md:flex items-center space-x-1">
             {NAV_LINKS.map((link) => (
               <Link key={link.href} href={link.href}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${pathname === link.href ? "text-primary bg-primary/10 border border-primary/20" : "text-gray-300 hover:text-primary hover:bg-white/5"}`}>
+                className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${link.cta ? "bg-primary text-black font-bold hover:bg-primary/90" : pathname === link.href ? "text-primary bg-primary/10 border border-primary/20" : "text-gray-300 hover:text-primary hover:bg-white/5"}`}>
                 {link.icon}{link.label}
               </Link>
             ))}
@@ -49,7 +57,7 @@ export function Navbar() {
         <div className="md:hidden bg-neutral-900 border-t border-white/10 px-4 pb-4 pt-3 flex flex-col gap-1.5">
           {NAV_LINKS.map((link) => (
             <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${pathname === link.href ? "bg-primary/10 text-primary border border-primary/30" : "text-gray-200 hover:text-primary hover:bg-white/5"}`}>
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${link.cta ? "bg-primary text-black font-bold hover:bg-primary/90" : pathname === link.href ? "bg-primary/10 text-primary border border-primary/30" : "text-gray-200 hover:text-primary hover:bg-white/5"}`}>
               {link.icon}{link.label}
             </Link>
           ))}

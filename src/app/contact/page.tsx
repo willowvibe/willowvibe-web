@@ -1,14 +1,31 @@
 "use client";
 
 import { Mail, Linkedin, CalendarClock, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
-export default function ContactPage() {
+const OFFER_NAMES: Record<string, string> = {
+    "ai-pilot": "AI on your data pilot ($4,000, 2 weeks)",
+    "pipeline-audit": "Pipeline health audit ($1,500, 1 week)",
+    "data-stack": "Data stack kickoff ($6,500, 2–3 weeks)",
+    "plm-readiness": "PLM migration readiness check ($3,000, 1–2 weeks)",
+};
+
+function ContactContent() {
+    const searchParams = useSearchParams();
+    const offer = searchParams.get("offer");
+    const offerName = offer ? OFFER_NAMES[offer] : undefined;
+    const offerMessage = offer
+        ? offerName
+            ? `I'd like to book a call about the ${offerName}.`
+            : `I'd like to book a call about the "${offer}" offer.`
+        : "";
+
     const [status, setStatus] = useState<FormStatus>("idle");
     const [errorMessage, setErrorMessage] = useState("");
-    const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+    const [form, setForm] = useState({ name: "", email: "", phone: "", message: offerMessage });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setForm((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -142,6 +159,14 @@ export default function ContactPage() {
 
             </div>
         </div>
+    );
+}
+
+export default function ContactPage() {
+    return (
+        <Suspense fallback={null}>
+            <ContactContent />
+        </Suspense>
     );
 }
 
