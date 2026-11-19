@@ -11,6 +11,7 @@ import {
   Wrench,
 } from "lucide-react";
 import Link from "next/link";
+import { BOOKING_URL } from "@/lib/site";
 
 type Offer = {
   slug: string;
@@ -238,7 +239,7 @@ function OfferCard({ offer, index }: { offer: Offer; index: number }) {
             href={`/contact?offer=${offer.slug}`}
             className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm ${offer.ctaColor} hover:scale-[1.02] transition-all shadow-lg`}
           >
-            Book a call <ArrowRight size={15} />
+            Get a quote <ArrowRight size={15} />
           </Link>
         </div>
       </div>
@@ -292,9 +293,19 @@ export default function WorkWithUsPage() {
           ))}
         </div>
 
-        <p className="mt-4 text-center text-xs md:text-sm text-gray-400">
-          Fixed quote within 48 hours of a 30-minute call.
-        </p>
+        <div className="mt-4 flex flex-col items-center gap-4">
+          <p className="text-center text-xs md:text-sm text-gray-400">
+            Fixed quote within 48 hours of a 30-minute call.
+          </p>
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-400 text-black font-bold rounded-xl hover:scale-105 transition-all text-sm shadow-[0_0_25px_rgba(34,211,238,0.3)]"
+          >
+            Book a 30-minute call <ArrowRight size={15} />
+          </a>
+        </div>
 
         {/* Need something else */}
         <motion.section
@@ -339,12 +350,14 @@ export default function WorkWithUsPage() {
             </div>
 
             <div className="relative z-10 mt-8">
-              <Link
-                href="/contact"
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-400 text-black font-bold rounded-xl hover:scale-105 transition-all text-sm shadow-[0_0_25px_rgba(34,211,238,0.3)]"
               >
                 Talk about your project <ArrowRight size={15} />
-              </Link>
+              </a>
             </div>
           </div>
         </motion.section>

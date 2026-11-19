@@ -16,7 +16,7 @@ const WELCOME: Message = {
 };
 
 const FALLBACK =
-  "I am having trouble connecting right now. Please email us at contact@willowvibe.com";
+  "I am having trouble connecting right now. Please email us at contact@willowvibe.com or book a call at https://cal.com/harishng/30min";
 
 export function ChatBot() {
   const [open, setOpen] = useState(false);

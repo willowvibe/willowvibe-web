@@ -3,6 +3,7 @@
 import { Mail, Linkedin, CalendarClock, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { BOOKING_URL } from "@/lib/site";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
@@ -67,6 +68,17 @@ function ContactContent() {
                     </div>
 
                     <div className="space-y-3 md:space-y-4">
+                        <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer"
+                            className="flex items-center gap-3 md:gap-4 group p-3 md:p-4 rounded-lg bg-white/5 border border-white/10 hover:border-primary/50 hover:bg-white/10 transition-all">
+                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center border border-white/20 group-hover:border-primary group-hover:shadow-[0_0_15px_rgba(0,240,255,0.4)] transition-all flex-shrink-0">
+                                <CalendarClock className="w-4 h-4 md:w-5 md:h-5 text-gray-300 group-hover:text-primary" />
+                            </div>
+                            <div>
+                                <div className="text-xs font-mono text-gray-500 mb-0.5">BOOK_A_CALL</div>
+                                <div className="text-sm md:text-base font-medium text-white">30-minute intro call</div>
+                            </div>
+                        </a>
+
                         <a href="mailto:contact@willowvibe.com"
                             className="flex items-center gap-3 md:gap-4 group p-3 md:p-4 rounded-lg bg-white/5 border border-white/10 hover:border-primary/50 hover:bg-white/10 transition-all">
                             <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center border border-white/20 group-hover:border-primary group-hover:shadow-[0_0_15px_rgba(0,240,255,0.4)] transition-all flex-shrink-0">
