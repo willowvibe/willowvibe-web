@@ -16,6 +16,7 @@ type Offer = {
   slug: string;
   name: string;
   price: string;
+  pricePrefix?: string;
   duration: string;
   badge?: string;
   audience: string;
@@ -37,6 +38,7 @@ const OFFERS: Offer[] = [
     slug: "ai-pilot",
     name: "AI on your data pilot",
     price: "$4,000",
+    pricePrefix: "From",
     duration: "2 weeks",
     badge: "Most requested",
     audience:
@@ -92,6 +94,7 @@ const OFFERS: Offer[] = [
     slug: "data-stack",
     name: "Data stack kickoff",
     price: "$6,500",
+    pricePrefix: "From",
     duration: "2\u20133 weeks",
     audience: "For teams starting or rebuilding a data platform.",
     deliverables: [
@@ -118,6 +121,7 @@ const OFFERS: Offer[] = [
     slug: "plm-readiness",
     name: "PLM migration readiness check",
     price: "$3,000",
+    pricePrefix: "From",
     duration: "1\u20132 weeks",
     audience:
       "For manufacturers and PLM integrators planning a Windchill or Teamcenter migration.",
@@ -184,8 +188,13 @@ function OfferCard({ offer, index }: { offer: Offer; index: number }) {
           {offer.name}
         </h3>
         <div className="flex flex-wrap items-baseline gap-3 mt-3">
-          <span className="text-2xl md:text-3xl font-extrabold text-white">
-            {offer.price}
+          <span className="flex items-baseline gap-1.5">
+            {offer.pricePrefix && (
+              <span className="text-xs font-mono text-gray-400">{offer.pricePrefix}</span>
+            )}
+            <span className="text-2xl md:text-3xl font-extrabold text-white">
+              {offer.price}
+            </span>
           </span>
           <span className={`inline-flex items-center gap-1.5 text-xs font-mono ${offer.textColor}`}>
             <Clock size={12} /> {offer.duration}
@@ -282,6 +291,10 @@ export default function WorkWithUsPage() {
             <OfferCard key={offer.slug} offer={offer} index={index} />
           ))}
         </div>
+
+        <p className="mt-4 text-center text-xs md:text-sm text-gray-400">
+          Fixed quote within 48 hours of a 30-minute call.
+        </p>
 
         {/* Need something else */}
         <motion.section
