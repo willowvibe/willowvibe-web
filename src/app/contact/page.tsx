@@ -7,10 +7,10 @@ import { useSearchParams } from "next/navigation";
 type FormStatus = "idle" | "loading" | "success" | "error";
 
 const OFFER_NAMES: Record<string, string> = {
-    "ai-pilot": "AI on your data pilot ($4,000, 2 weeks)",
+    "ai-pilot": "AI on your data pilot (from $4,000, 2 weeks)",
     "pipeline-audit": "Pipeline health audit ($1,500, 1 week)",
-    "data-stack": "Data stack kickoff ($6,500, 2–3 weeks)",
-    "plm-readiness": "PLM migration readiness check ($3,000, 1–2 weeks)",
+    "data-stack": "Data stack kickoff (from $6,500, 2–3 weeks)",
+    "plm-readiness": "PLM migration readiness check (from $3,000, 1–2 weeks)",
 };
 
 function ContactContent() {
