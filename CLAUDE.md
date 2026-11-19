@@ -39,11 +39,12 @@ These must also be configured in the Vercel dashboard under Project Settings →
 - `src/app/about/page.tsx` — About / team page (plus `about/layout.tsx` for page metadata)
 - `src/app/services/page.tsx` — Services listing (plus `services/layout.tsx`)
 - `src/app/products/page.tsx` — Products page (plus `products/layout.tsx`)
-- `src/app/contact/page.tsx` — Contact page with form (plus `contact/layout.tsx`)
+- `src/app/contact/page.tsx` — Contact page with form (plus `contact/layout.tsx`); prefills the message from `?offer=<slug>`
+- `src/app/work-with-us/page.tsx` — Fixed-price offers (AI pilot, pipeline audit, data stack kickoff, PLM readiness check, hourly/retainer) linking to `/contact?offer=<slug>` (plus `work-with-us/layout.tsx`)
 - `src/app/privacy/page.tsx` — Privacy policy
 - `src/app/terms/page.tsx` — Terms of service
 - `src/app/not-found.tsx` — Custom 404 page
-- `src/app/sitemap.ts` — Generates `/sitemap.xml` (/, /services, /products, /about, /contact, /privacy, /terms)
+- `src/app/sitemap.ts` — Generates `/sitemap.xml` (/, /services, /products, /work-with-us, /about, /contact, /privacy, /terms)
 - `src/app/robots.ts` — Generates `/robots.txt` (allows all, links the sitemap)
 - `src/app/opengraph-image.tsx` — 1200x630 social share image via `next/og`
 - `src/app/api/contact/route.ts` — API route handling contact form submissions via Nodemailer
