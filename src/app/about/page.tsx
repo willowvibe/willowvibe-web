@@ -382,7 +382,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { title: "Radical Transparency", desc: "No black boxes. Every pipeline and decision fully documented." },
-              { title: "Security by Design", desc: "Enterprise-grade encryption baked into day one of our code." },
+              { title: "Fixed Quotes", desc: "A fixed scope and price within 48 hours of a 30-minute call." },
               { title: "Agile Execution", desc: "Rapid iteration and reliable deployments that adapt to your needs." },
             ].map((val, idx) => (
               <motion.div

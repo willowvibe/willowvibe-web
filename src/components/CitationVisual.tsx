@@ -1,10 +1,15 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 
 export function CitationVisual() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.2 });
+
   return (
     <div
+      ref={ref}
       aria-hidden="true"
       className="relative w-full h-48 bg-neutral-900 rounded-xl overflow-hidden border border-neutral-600 select-none shadow-inner flex flex-col justify-center gap-3 px-5"
     >
@@ -37,15 +42,19 @@ export function CitationVisual() {
                 "linear-gradient(transparent 12%, rgba(253, 224, 71, 0.32) 12%, rgba(253, 224, 71, 0.32) 88%, transparent 88%)",
             }}
             initial={{ backgroundSize: "0% 100%" }}
-            animate={{ backgroundSize: "100% 100%" }}
-            transition={{
-              duration: 1.1,
-              ease: "easeInOut",
-              delay: 0.5,
-              repeat: Infinity,
-              repeatDelay: 2.6,
-              repeatType: "reverse",
-            }}
+            animate={inView ? { backgroundSize: "100% 100%" } : { backgroundSize: "0% 100%" }}
+            transition={
+              inView
+                ? {
+                    duration: 1.1,
+                    ease: "easeInOut",
+                    delay: 0.5,
+                    repeat: Infinity,
+                    repeatDelay: 2.6,
+                    repeatType: "reverse",
+                  }
+                : undefined
+            }
           >
             the verifier SHALL limit consecutive failed authentication
             attempts &hellip; to no more than 100

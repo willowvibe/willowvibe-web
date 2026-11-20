@@ -10,8 +10,8 @@ import {
   Sparkles,
   Wrench,
 } from "lucide-react";
-import Link from "next/link";
 import { BOOKING_URL } from "@/lib/site";
+import { TrackedLink } from "@/components/TrackedLink";
 
 type Offer = {
   slug: string;
@@ -183,11 +183,11 @@ function OfferCard({ offer, index }: { offer: Offer; index: number }) {
             <Sparkles size={11} /> {offer.badge}
           </span>
         )}
-        <h3
+        <h2
           className={`mt-3 text-xl md:text-2xl font-extrabold tracking-tight bg-gradient-to-r ${offer.titleGradient} bg-clip-text text-transparent leading-tight`}
         >
           {offer.name}
-        </h3>
+        </h2>
         <div className="flex flex-wrap items-baseline gap-3 mt-3">
           <span className="flex items-baseline gap-1.5">
             {offer.pricePrefix && (
@@ -217,7 +217,7 @@ function OfferCard({ offer, index }: { offer: Offer; index: number }) {
 
         <div className="mt-auto flex flex-col gap-4 pt-4 border-t border-white/10">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-mono">
-            <span className="text-gray-500 uppercase tracking-widest text-[10px]">
+            <span className="text-gray-400 uppercase tracking-widest text-[10px]">
               Built on
             </span>
             {offer.builtOn.map((repo, repoIndex) => (
@@ -235,12 +235,14 @@ function OfferCard({ offer, index }: { offer: Offer; index: number }) {
             ))}
           </div>
 
-          <Link
+          <TrackedLink
             href={`/contact?offer=${offer.slug}`}
+            event="quote_click"
+            props={{ offer: offer.slug }}
             className={`inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-sm ${offer.ctaColor} hover:scale-[1.02] transition-all shadow-lg`}
           >
             Get a quote <ArrowRight size={15} />
-          </Link>
+          </TrackedLink>
         </div>
       </div>
 
@@ -297,14 +299,16 @@ export default function WorkWithUsPage() {
           <p className="text-center text-xs md:text-sm text-gray-400">
             Fixed quote within 48 hours of a 30-minute call.
           </p>
-          <a
+          <TrackedLink
             href={BOOKING_URL}
+            event="book_call_click"
+            props={{ location: "work-with-us" }}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-400 text-black font-bold rounded-xl hover:scale-105 transition-all text-sm shadow-[0_0_25px_rgba(34,211,238,0.3)]"
           >
             Book a 30-minute call <ArrowRight size={15} />
-          </a>
+          </TrackedLink>
         </div>
 
         {/* Need something else */}
@@ -350,14 +354,16 @@ export default function WorkWithUsPage() {
             </div>
 
             <div className="relative z-10 mt-8">
-              <a
+              <TrackedLink
                 href={BOOKING_URL}
+                event="book_call_click"
+                props={{ location: "work-with-us" }}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-400 text-black font-bold rounded-xl hover:scale-105 transition-all text-sm shadow-[0_0_25px_rgba(34,211,238,0.3)]"
               >
                 Talk about your project <ArrowRight size={15} />
-              </a>
+              </TrackedLink>
             </div>
           </div>
         </motion.section>

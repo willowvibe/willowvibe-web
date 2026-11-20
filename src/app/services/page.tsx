@@ -193,7 +193,7 @@ export default function ServicesPage() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="text-gray-300 text-sm md:text-base leading-relaxed max-w-sm"
             >
-              Cutting-edge distributed systems with robust engineering designed to scale with your business.
+              Data pipelines, AI on your own data and PLM data work for small teams, each backed by open-source tools we&apos;ve shipped.
             </motion.p>
           </div>
 
@@ -266,7 +266,8 @@ export default function ServicesPage() {
                           >
                             {svc.title}
                             <div className="mt-1.5 flex items-center gap-1 text-[9px] font-mono opacity-60">
-                              Read more <ArrowRight size={9} />
+                              Read more <ArrowRight size={9} aria-hidden="true" />
+                              <span className="sr-only"> about {svc.title}</span>
                             </div>
                           </motion.button>
 

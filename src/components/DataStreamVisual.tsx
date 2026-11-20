@@ -1,10 +1,16 @@
-import { motion } from "framer-motion";
+"use client";
+
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import { Database, Cpu, Wifi } from "lucide-react";
 
 export function DataStreamVisual() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.2 });
+
   return (
-    <div className="relative w-full h-48 bg-neutral-900 rounded-xl overflow-hidden border border-neutral-600 select-none shadow-inner flex items-center justify-between px-6">
-      
+    <div ref={ref} className="relative w-full h-48 bg-neutral-900 rounded-xl overflow-hidden border border-neutral-600 select-none shadow-inner flex items-center justify-between px-6">
+
       {/* 📡 Left Side: Data Sources */}
       <div className="flex flex-col gap-6 relative z-10">
         <div className="w-10 h-10 rounded-full bg-neutral-800 border border-neutral-500 flex items-center justify-center shadow-lg">
@@ -21,22 +27,22 @@ export function DataStreamVisual() {
       {/* ⚡ The Streaming Packets */}
       <div className="absolute left-16 right-20 top-0 bottom-0 pointer-events-none">
         {/* Top Stream */}
-        <motion.div 
+        <motion.div
           className="absolute top-[40px] w-3 h-1 bg-cyan-400 rounded-full shadow-[0_0_8px_cyan]"
-          animate={{ left: ["0%", "100%"], opacity: [0, 1, 0] }}
-          transition={{ duration: 0.8, repeat: Infinity, ease: "linear", delay: 0.1 }}
+          animate={inView ? { left: ["0%", "100%"], opacity: [0, 1, 0] } : { left: "0%", opacity: 0 }}
+          transition={inView ? { duration: 0.8, repeat: Infinity, ease: "linear", delay: 0.1 } : undefined}
         />
         {/* Middle Stream */}
-        <motion.div 
+        <motion.div
           className="absolute top-[94px] w-6 h-1 bg-cyan-300 rounded-full shadow-[0_0_10px_cyan]"
-          animate={{ left: ["0%", "100%"], opacity: [0, 1, 0] }}
-          transition={{ duration: 0.6, repeat: Infinity, ease: "linear", delay: 0.4 }}
+          animate={inView ? { left: ["0%", "100%"], opacity: [0, 1, 0] } : { left: "0%", opacity: 0 }}
+          transition={inView ? { duration: 0.6, repeat: Infinity, ease: "linear", delay: 0.4 } : undefined}
         />
         {/* Bottom Stream */}
-        <motion.div 
+        <motion.div
           className="absolute bottom-[40px] w-4 h-1 bg-cyan-500 rounded-full shadow-[0_0_8px_cyan]"
-          animate={{ left: ["0%", "100%"], opacity: [0, 1, 0] }}
-          transition={{ duration: 0.9, repeat: Infinity, ease: "linear", delay: 0.2 }}
+          animate={inView ? { left: ["0%", "100%"], opacity: [0, 1, 0] } : { left: "0%", opacity: 0 }}
+          transition={inView ? { duration: 0.9, repeat: Infinity, ease: "linear", delay: 0.2 } : undefined}
         />
       </div>
 

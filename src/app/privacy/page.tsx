@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
-export const metadata: Metadata = { title: "Privacy Policy", description: "How WillowVibe Data Synapse collects and protects your personal information." };
+const title = "Privacy Policy";
+const description = "How WillowVibe Data Synapse collects and protects your personal information.";
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: { canonical: "/privacy" },
+  openGraph: { title: `${title} | WillowVibe Data Synapse`, description, url: "/privacy" },
+  twitter: { title: `${title} | WillowVibe Data Synapse`, description },
+};
 export default function PrivacyPage() {
     return (
         <div className="min-h-screen bg-neutral-950 text-white">

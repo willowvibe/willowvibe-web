@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 
+const title = "Work with us";
+const description =
+  "Fixed-price data and AI engagements: AI pilots, pipeline audits, data stack builds and PLM migration checks, built on open-source tools we've shipped.";
+
 export const metadata: Metadata = {
-  title: "Work with us",
-  description:
-    "Fixed-scope, fixed-price data and AI engagements. AI pilots, pipeline audits, data stack builds and PLM migration readiness checks, built on open-source tools we've shipped.",
+  title,
+  description,
   alternates: { canonical: "/work-with-us" },
+  openGraph: { title: `${title} | WillowVibe Data Synapse`, description, url: "/work-with-us" },
+  twitter: { title: `${title} | WillowVibe Data Synapse`, description },
 };
 
 export default function WorkWithUsLayout({ children }: { children: React.ReactNode }) {

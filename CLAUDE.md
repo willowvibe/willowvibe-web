@@ -47,14 +47,20 @@ These must also be configured in the Vercel dashboard under Project Settings →
 - `src/app/sitemap.ts` — Generates `/sitemap.xml` (/, /services, /products, /work-with-us, /about, /contact, /privacy, /terms)
 - `src/app/robots.ts` — Generates `/robots.txt` (allows all, links the sitemap)
 - `src/app/opengraph-image.tsx` — 1200x630 social share image via `next/og`
+- `src/app/icon.tsx`, `src/app/apple-icon.tsx`, `src/app/manifest.ts` — generated PNG icons and the web manifest
+- `src/app/logo.png/route.tsx` — 512x512 logo PNG (used as the JSON-LD `logo`)
 - `src/app/api/contact/route.ts` — API route handling contact form submissions via Nodemailer
 - `src/app/api/chat/route.ts` — API route proxying the chat widget to the Anthropic Messages API
-- `src/app/layout.tsx` — Root layout: metadata (`metadataBase`, canonical, Twitter card), viewport with themeColor, Organization JSON-LD, skip-to-content link, Navbar, Footer, and ChatBot
+- `src/app/layout.tsx` — Root layout: metadata (`metadataBase`, home canonical, OG/Twitter), viewport with themeColor, JSON-LD (Organization, WebSite, ProfessionalService with the four offers), skip-to-content link, Navbar, Footer, `ChatBotLoader` and Vercel `<Analytics />`
+- Every page sets its own `alternates.canonical` and `openGraph`/`twitter` title, description and url (in its `layout.tsx`, or `page.tsx` for privacy/terms); the 404 page is `noindex`
 
 ### Component Patterns
 - Most page-level data (team members, services, projects, products, testimonials) is defined as constants at the top of the respective page file.
 - Interactive components use `"use client"` directive; pages are server components by default.
 - `src/components/ChatBot.tsx` is an AI chat widget backed by Claude through `POST /api/chat` — not rule-based. The hard-coded welcome greeting stays client-side and is never sent to the API; failures render a friendly fallback pointing to contact@willowvibe.com.
+- `src/components/ChatBotLoader.tsx` mounts the ChatBot with `next/dynamic` (`ssr: false`) once the browser is idle, so it doesn't block first load.
+- `src/components/ContactForm.tsx` holds the contact form; only it sits inside `<Suspense>` (it reads `?offer=`), so the rest of /contact is server-rendered.
+- `src/components/TrackedLink.tsx` sends Vercel Analytics events on click: `book_call_click` (booking links), `quote_click` (offer buttons); the form sends `contact_submit`.
 - `src/components/MotionProvider.tsx` wraps the app in framer-motion `MotionConfig reducedMotion="user"`.
 - Project visuals rendered in the home page featured-projects carousel:
   - `src/components/AnomalyDetectionVisual.tsx` — ObservaKit (data observability)
