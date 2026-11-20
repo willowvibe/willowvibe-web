@@ -50,6 +50,7 @@ Providers without an API key are skipped, so the chain falls through to the next
 - `src/app/about/page.tsx` — About / team page (plus `about/layout.tsx` for page metadata)
 - `src/app/services/page.tsx` — Services hub: five cards from `src/lib/services.ts` (plus `services/layout.tsx`)
 - `src/app/services/[slug]/page.tsx` — One statically generated page per service (`ai-on-your-data`, `ai-integration`, `data-pipelines`, `plm-data-migration`, `web-and-data-apps`) rendered by `src/components/ServicePage.tsx` with Service, BreadcrumbList and FAQPage JSON-LD; unknown slugs 404
+- `src/app/insights/page.tsx` — Insights hub listing `ARTICLES` from `src/lib/insights.ts`; each article is a server page at `src/app/insights/<slug>/page.tsx` rendered through `src/components/ArticleLayout.tsx` (breadcrumb, author/date meta, CTA to the related service and booking link, Article + BreadcrumbList JSON-LD). New articles: add an entry to `ARTICLES`, a page folder, and the URL to `sitemap.ts`
 - `src/app/products/page.tsx` — Products page (plus `products/layout.tsx`)
 - `src/app/contact/page.tsx` — Contact page with form (plus `contact/layout.tsx`); prefills the message from `?offer=<slug>`
 - `src/app/work-with-us/page.tsx` — Fixed-price offers (AI pilot, pipeline audit, data stack kickoff, PLM readiness check, hourly/retainer) linking to `/contact?offer=<slug>` (plus `work-with-us/layout.tsx`)
