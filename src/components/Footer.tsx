@@ -13,11 +13,11 @@ const NAV_LINKS = [
 ];
 
 const SERVICE_LINKS = [
-  { label: "AI on your own data" },
-  { label: "AI integration" },
-  { label: "Data pipelines" },
-  { label: "PLM data migration" },
-  { label: "Web and data apps" },
+  { label: "AI on your own data", href: "/services/ai-on-your-data" },
+  { label: "AI integration", href: "/services/ai-integration" },
+  { label: "Data pipelines", href: "/services/data-pipelines" },
+  { label: "PLM data migration", href: "/services/plm-data-migration" },
+  { label: "Web and data apps", href: "/services/web-and-data-apps" },
 ];
 
 export function Footer() {
@@ -69,7 +69,7 @@ export function Footer() {
             <ul className="space-y-2.5">
               {SERVICE_LINKS.map((link) => (
                 <li key={link.label}>
-                  <Link href="/work-with-us" className="text-gray-400 text-sm hover:text-primary transition-colors flex items-center gap-1.5 group">
+                  <Link href={link.href} className="text-gray-400 text-sm hover:text-primary transition-colors flex items-center gap-1.5 group">
                     <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />{link.label}
                   </Link>
                 </li>

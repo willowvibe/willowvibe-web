@@ -82,6 +82,7 @@ const PROJECTS: Project[] = [
 const CAPABILITIES = [
   {
     id: "ai",
+    href: "/services/ai-on-your-data",
     illustration: "/analytics.svg",
     alt: "Analytics illustration for AI on your own data",
     title: "AI on your own data",
@@ -95,6 +96,7 @@ const CAPABILITIES = [
   },
   {
     id: "ai-integration",
+    href: "/services/ai-integration",
     illustration: "/core.svg",
     alt: "Integration illustration for connecting AI models to existing tools",
     title: "AI integration",
@@ -108,6 +110,7 @@ const CAPABILITIES = [
   },
   {
     id: "pipelines",
+    href: "/services/data-pipelines",
     illustration: "/pipe.svg",
     alt: "Pipeline illustration for data pipelines",
     title: "Data pipelines",
@@ -121,6 +124,7 @@ const CAPABILITIES = [
   },
   {
     id: "plm",
+    href: "/services/plm-data-migration",
     illustration: "/team.svg",
     alt: "Team illustration for PLM data migration",
     title: "PLM data migration",
@@ -134,6 +138,7 @@ const CAPABILITIES = [
   },
   {
     id: "apps",
+    href: "/services/web-and-data-apps",
     illustration: "/server.svg",
     alt: "Server illustration for web and data apps",
     title: "Web and data apps",
@@ -190,10 +195,10 @@ function CoreCapabilitiesIDE() {
                 ))}
               </div>
               <Link
-                href="/work-with-us"
+                href={pillar.href}
                 className={`inline-flex items-center gap-2 text-xs font-mono font-bold px-4 py-2 rounded-lg border-2 ${pillar.tagColor} hover:scale-105 hover:opacity-90 transition-all mt-auto shadow-sm`}
               >
-                Explore {pillar.title} <ArrowRight size={12} />
+                Explore {pillar.title} <ArrowRight size={12} aria-hidden="true" />
               </Link>
             </div>
 
