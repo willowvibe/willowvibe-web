@@ -3,27 +3,30 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { ChatBot } from "@/components/ChatBot";
+import { ChatBotLoader } from "@/components/ChatBotLoader";
 import { MotionProvider } from "@/components/MotionProvider";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 const SITE_URL = "https://www.willowvibe.com";
+const SITE_NAME = "WillowVibe | Data Synapse";
+const SITE_TITLE = "WillowVibe | Data Synapse — Data Engineering Services";
 const SITE_DESCRIPTION =
-  "WillowVibe Data Synapse is your dedicated data engineering team. We build resilient cloud lakehouses, automate complex data pipelines, and eliminate data silos.";
+  "Fixed-scope data engineering and AI on your own data: Airflow and dbt pipelines, document Q&A pilots and PLM migration checks, built on open-source tools.";
+const SAME_AS = ["https://github.com/willowvibe", "https://www.linkedin.com/company/willowvibe/"];
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: "WillowVibe | Data Synapse — Data Engineering Services", template: "%s | WillowVibe Data Synapse" },
+  title: { default: SITE_TITLE, template: "%s | WillowVibe Data Synapse" },
   description: SITE_DESCRIPTION,
   keywords: ["data engineering", "data pipeline", "cloud lakehouse", "ETL ELT", "Snowflake", "Databricks", "AWS data engineering", "WillowVibe"],
   authors: [{ name: "WillowVibe Data Synapse", url: SITE_URL }],
   alternates: { canonical: "/" },
-  openGraph: { type: "website", locale: "en_US", url: SITE_URL, siteName: "WillowVibe | Data Synapse", title: "WillowVibe | Data Synapse — Architecting the Data Ecosystem of Tomorrow", description: "Your dedicated data engineering team." },
+  openGraph: { type: "website", locale: "en_US", url: SITE_URL, siteName: SITE_NAME, title: SITE_TITLE, description: SITE_DESCRIPTION },
   twitter: {
     card: "summary_large_image",
-    title: "WillowVibe | Data Synapse — Data Engineering Services",
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
   },
   robots: { index: true, follow: true },
@@ -33,14 +36,77 @@ export const viewport: Viewport = {
   themeColor: "#000000",
 };
 
-const organizationJsonLd = {
+const structuredData = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "WillowVibe | Data Synapse",
-  url: SITE_URL,
-  logo: `${SITE_URL}/favicon.ico`,
-  email: "contact@willowvibe.com",
-  sameAs: ["https://github.com/willowvibe", "https://www.linkedin.com/company/willowvibe/"],
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: `${SITE_URL}/logo.png`,
+      email: "contact@willowvibe.com",
+      sameAs: SAME_AS,
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": `${SITE_URL}/#service`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      email: "contact@willowvibe.com",
+      logo: `${SITE_URL}/logo.png`,
+      image: `${SITE_URL}/opengraph-image`,
+      sameAs: SAME_AS,
+      areaServed: ["US", "GB", "EU", "AU"],
+      address: [
+        {
+          "@type": "PostalAddress",
+          addressLocality: "Bengaluru",
+          addressRegion: "Karnataka",
+          addressCountry: "IN",
+        },
+        {
+          "@type": "PostalAddress",
+          addressLocality: "Hilter",
+          addressRegion: "Lower Saxony",
+          addressCountry: "DE",
+        },
+      ],
+      makesOffer: [
+        {
+          "@type": "Offer",
+          itemOffered: { "@type": "Service", name: "Pipeline health audit" },
+          price: 1500,
+          priceCurrency: "USD",
+          url: `${SITE_URL}/work-with-us`,
+        },
+        {
+          "@type": "Offer",
+          itemOffered: { "@type": "Service", name: "AI on your data pilot" },
+          priceSpecification: { "@type": "PriceSpecification", minPrice: 4000, priceCurrency: "USD" },
+          url: `${SITE_URL}/work-with-us`,
+        },
+        {
+          "@type": "Offer",
+          itemOffered: { "@type": "Service", name: "Data stack kickoff" },
+          priceSpecification: { "@type": "PriceSpecification", minPrice: 6500, priceCurrency: "USD" },
+          url: `${SITE_URL}/work-with-us`,
+        },
+        {
+          "@type": "Offer",
+          itemOffered: { "@type": "Service", name: "PLM migration readiness check" },
+          priceSpecification: { "@type": "PriceSpecification", minPrice: 3000, priceCurrency: "USD" },
+          url: `${SITE_URL}/work-with-us`,
+        },
+      ],
+    },
+  ],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -55,13 +121,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </a>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         <MotionProvider>
           <Navbar />
           <main id="main" className="pt-16 md:pt-20 min-h-screen">{children}</main>
           <Footer />
-          <ChatBot />
+          <ChatBotLoader />
         </MotionProvider>
       </body>
     </html>

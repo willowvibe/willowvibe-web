@@ -1,10 +1,16 @@
-import { motion } from "framer-motion";
+"use client";
+
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import { ShieldAlert, CheckCircle2 } from "lucide-react";
 
 export function AnomalyDetectionVisual() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.2 });
+
   return (
-    <div className="relative w-full h-48 bg-neutral-900 rounded-xl overflow-hidden border border-neutral-600 select-none shadow-inner flex flex-col items-center justify-center">
-      
+    <div ref={ref} className="relative w-full h-48 bg-neutral-900 rounded-xl overflow-hidden border border-neutral-600 select-none shadow-inner flex flex-col items-center justify-center">
+
       {/* Background grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:15px_15px]"></div>
 
@@ -16,33 +22,33 @@ export function AnomalyDetectionVisual() {
 
       {/* The Data Track */}
       <div className="w-full h-12 relative flex items-center overflow-hidden border-y border-neutral-800">
-        
+
         {/* Safe Data Node 1 */}
-        <motion.div 
+        <motion.div
           className="absolute w-4 h-4 bg-cyan-400 rounded shadow-[0_0_10px_cyan]"
-          animate={{ left: ["-10%", "110%"] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "linear", delay: 0 }}
+          animate={inView ? { left: ["-10%", "110%"] } : { left: "-10%" }}
+          transition={inView ? { duration: 2.5, repeat: Infinity, ease: "linear", delay: 0 } : undefined}
         />
-        
+
         {/* 🚨 THE ANOMALY (Red Node) */}
-        <motion.div 
+        <motion.div
           className="absolute w-4 h-4 bg-red-500 rounded shadow-[0_0_15px_red] z-20 flex items-center justify-center"
-          animate={{ left: ["-10%", "48%", "48%", "48%"], scale: [1, 1, 1.5, 0], opacity: [1, 1, 1, 0] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "linear", delay: 0.8 }}
+          animate={inView ? { left: ["-10%", "48%", "48%", "48%"], scale: [1, 1, 1.5, 0], opacity: [1, 1, 1, 0] } : { left: "-10%", scale: 1, opacity: 1 }}
+          transition={inView ? { duration: 2.5, repeat: Infinity, ease: "linear", delay: 0.8 } : undefined}
         >
           {/* Target lock box that appears when it hits the center scanner */}
-          <motion.div 
+          <motion.div
             className="absolute inset-[-6px] border border-red-400"
-            animate={{ opacity: [0, 0, 1, 0], scale: [1, 1, 1.2, 0.8] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "linear", delay: 0.8 }}
+            animate={inView ? { opacity: [0, 0, 1, 0], scale: [1, 1, 1.2, 0.8] } : { opacity: 0 }}
+            transition={inView ? { duration: 2.5, repeat: Infinity, ease: "linear", delay: 0.8 } : undefined}
           />
         </motion.div>
 
         {/* Safe Data Node 2 */}
-        <motion.div 
+        <motion.div
           className="absolute w-4 h-4 bg-cyan-400 rounded shadow-[0_0_10px_cyan]"
-          animate={{ left: ["-10%", "110%"] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "linear", delay: 1.6 }}
+          animate={inView ? { left: ["-10%", "110%"] } : { left: "-10%" }}
+          transition={inView ? { duration: 2.5, repeat: Infinity, ease: "linear", delay: 1.6 } : undefined}
         />
       </div>
 

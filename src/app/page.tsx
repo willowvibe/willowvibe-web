@@ -4,11 +4,27 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Server, Quote, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
-import { DataStreamVisual } from "@/components/DataStreamVisual";
-import { AnomalyDetectionVisual } from "@/components/AnomalyDetectionVisual";
-import { CitationVisual } from "@/components/CitationVisual";
+import { motion, useInView } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const visualPlaceholder = () => <div className="w-full h-48" />;
+
+const BeforeAfterSlider = dynamic(
+  () => import("@/components/BeforeAfterSlider").then((mod) => mod.BeforeAfterSlider),
+  { ssr: false, loading: visualPlaceholder },
+);
+const DataStreamVisual = dynamic(
+  () => import("@/components/DataStreamVisual").then((mod) => mod.DataStreamVisual),
+  { ssr: false, loading: visualPlaceholder },
+);
+const AnomalyDetectionVisual = dynamic(
+  () => import("@/components/AnomalyDetectionVisual").then((mod) => mod.AnomalyDetectionVisual),
+  { ssr: false, loading: visualPlaceholder },
+);
+const CitationVisual = dynamic(
+  () => import("@/components/CitationVisual").then((mod) => mod.CitationVisual),
+  { ssr: false, loading: visualPlaceholder },
+);
 
 type Project = {
   id: number;
@@ -152,6 +168,7 @@ function CoreCapabilitiesIDE() {
                 className={`inline-flex items-center gap-2 text-xs font-mono font-bold px-4 py-2 rounded-lg border-2 ${pillar.tagColor} hover:scale-105 hover:opacity-90 transition-all mt-auto shadow-sm`}
               >
                 Explore service <ArrowRight size={12} />
+                <span className="sr-only"> {pillar.title}</span>
               </Link>
             </div>
 
@@ -166,6 +183,8 @@ function CoreCapabilitiesIDE() {
 
 export default function Home() {
   const sliderRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const heroInView = useInView(heroRef, { amount: 0.2 });
   const [isPaused, setIsPaused] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -223,14 +242,14 @@ export default function Home() {
     <div className="flex flex-col items-center min-h-screen bg-neutral-950 text-white overflow-x-hidden selection:bg-cyan-400/30">
 
       {/* 1. HERO */}
-      <section className="relative w-full max-w-7xl mx-auto px-4 pt-8 pb-2 md:pt-24 md:pb-8 text-left">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[120px] -z-10 animate-pulse" />
+      <section ref={heroRef} className="relative w-full max-w-7xl mx-auto px-4 pt-8 pb-2 md:pt-24 md:pb-8 text-left">
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[120px] -z-10${heroInView ? " animate-pulse" : ""}`} />
 
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-12 w-full">
           <div className="flex flex-col items-center md:items-start text-center md:text-left w-full md:w-1/2">
             <div className="w-full max-w-xl mx-auto md:mx-0 relative mb-6 md:mb-8 pt-2 md:pt-8">
               <div className="absolute left-0 right-0 top-1/2 h-px bg-white/10 -translate-y-1/2 z-0 mt-3">
-                <motion.div className="h-full bg-cyan-400" animate={{ x: ["-100%", "200%"] }} transition={{ repeat: Infinity, duration: 3, ease: "linear" }} style={{ width: "30%" }} />
+                <motion.div className="h-full bg-cyan-400" animate={heroInView ? { x: ["-100%", "200%"] } : { x: "-100%" }} transition={heroInView ? { repeat: Infinity, duration: 3, ease: "linear" } : undefined} style={{ width: "30%" }} />
               </div>
               <div className="flex items-center justify-between w-full relative z-10">
                 {["INGESTION", "TRANSFORMATION", "INTELLIGENCE"].map((step) => (
@@ -282,12 +301,11 @@ export default function Home() {
       {/* 2. TRUST TICKER */}
       <section className="w-full border-y border-white/5 bg-white/[0.02] py-2 md:py-3 overflow-hidden">
         <div className="w-full relative flex overflow-hidden">
-          <motion.div className="flex gap-6 md:gap-24 whitespace-nowrap px-4 md:px-12"
-            animate={{ x: [0, -2000] }} transition={{ repeat: Infinity, ease: "linear", duration: 40 }}>
+          <div className="marquee flex w-max gap-6 md:gap-24 whitespace-nowrap px-4 md:px-12">
             {["AWS", "SNOWFLAKE", "DATABRICKS", "KAFKA", "DBT", "AIRFLOW", "TEAMCENTER", "WINDCHILL", "BOM MANAGEMENT", "VARIANT CONFIGURATION", "CHANGE CONTROL", "ENOVIA", "AWS", "SNOWFLAKE", "DATABRICKS", "KAFKA", "DBT", "AIRFLOW", "TEAMCENTER", "WINDCHILL", "BOM MANAGEMENT", "VARIANT CONFIGURATION", "CHANGE CONTROL", "ENOVIA"].map((tech, i) => (
-              <span key={i} className="text-[10px] md:text-base font-mono font-bold text-gray-600 tracking-widest uppercase">{tech}</span>
+              <span key={i} className="text-[10px] md:text-base font-mono font-bold text-gray-400 tracking-widest uppercase">{tech}</span>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -356,10 +374,14 @@ export default function Home() {
               key={project.id}
               type="button"
               onClick={() => scrollToIndex(index)}
-              className={`h-2 transition-all duration-300 rounded-full ${activeIndex === index ? "w-8 bg-cyan-400" : "w-2 bg-white/30"}`}
+              className="flex min-w-6 min-h-6 items-center justify-center rounded-full"
               aria-label={`Go to project ${index + 1}: ${project.title}`}
               aria-current={activeIndex === index}
-            />
+            >
+              <span
+                className={`h-2 transition-all duration-300 rounded-full ${activeIndex === index ? "w-8 bg-cyan-400" : "w-2 bg-white/30"}`}
+              />
+            </button>
           ))}
         </div>
       </section>
@@ -383,7 +405,7 @@ export default function Home() {
               </div>
               <p className="text-gray-300 text-sm leading-relaxed italic mb-3">&ldquo;{testimonial.quote}&rdquo;</p>
               <div className="border-t border-neutral-700 pt-3">
-                <h4 className="text-white font-bold text-sm">{testimonial.name}</h4>
+                <h3 className="text-white font-bold text-sm">{testimonial.name}</h3>
                 <p className="text-cyan-400 text-xs font-mono mt-0.5">{testimonial.role}</p>
               </div>
             </div>
@@ -410,7 +432,7 @@ export default function Home() {
               <div className="flex gap-1 mb-3">{[...Array(5)].map((_, i) => (<svg key={i} className="w-3 h-3 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>))}</div>
               <p className="text-gray-300 text-sm leading-relaxed italic mb-4 flex-grow">&ldquo;{testimonial.quote}&rdquo;</p>
               <div className="border-t border-neutral-700 pt-3">
-                <h4 className="text-white font-bold text-sm">{testimonial.name}</h4>
+                <h3 className="text-white font-bold text-sm">{testimonial.name}</h3>
                 <p className="text-cyan-400 text-xs font-mono mt-0.5">{testimonial.role}</p>
               </div>
             </motion.div>
@@ -471,6 +493,7 @@ function ProjectCard({ title, tags, stat, desc, visual, link }: Project) {
         className="mt-4 inline-flex items-center gap-2 text-xs font-mono font-bold text-cyan-400 hover:gap-3 transition-all"
       >
         {isExternal ? "View project" : "Learn more"} <ArrowRight size={12} />
+        <span className="sr-only"> {title}</span>
       </Link>
     </div>
   );

@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FileText } from "lucide-react";
-export const metadata: Metadata = { title: "Terms of Service", description: "Terms and conditions for using WillowVibe Data Synapse services and website." };
+const title = "Terms of Service";
+const description = "Terms and conditions for using WillowVibe Data Synapse services and website.";
+export const metadata: Metadata = {
+  title,
+  description,
+  alternates: { canonical: "/terms" },
+  openGraph: { title, description, url: "/terms" },
+};
 export default function TermsPage() {
     return (
         <div className="min-h-screen bg-neutral-950 text-white">

@@ -266,7 +266,8 @@ export default function ServicesPage() {
                           >
                             {svc.title}
                             <div className="mt-1.5 flex items-center gap-1 text-[9px] font-mono opacity-60">
-                              Read more <ArrowRight size={9} />
+                              Read more <ArrowRight size={9} aria-hidden="true" />
+                              <span className="sr-only"> about {svc.title}</span>
                             </div>
                           </motion.button>
 

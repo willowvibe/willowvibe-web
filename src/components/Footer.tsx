@@ -80,12 +80,12 @@ export function Footer() {
 
       <div className="border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-gray-600 text-xs font-mono">© {new Date().getFullYear()} WillowVibe | Data Synapse. All rights reserved.</p>
+          <p className="text-gray-400 text-xs font-mono">© {new Date().getFullYear()} WillowVibe | Data Synapse. All rights reserved.</p>
           <div className="flex flex-wrap items-center gap-4">
-            <Link href="/privacy" className="text-gray-600 text-xs hover:text-gray-400 transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="text-gray-600 text-xs hover:text-gray-400 transition-colors">Terms of Service</Link>
-            <a href="mailto:contact@willowvibe.com" className="text-gray-600 text-xs hover:text-primary transition-colors font-mono">contact@willowvibe.com</a>
-            <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="text-gray-600 text-xs hover:text-primary transition-colors font-mono">Book a call</a>
+            <Link href="/privacy" className="text-gray-400 text-xs hover:text-gray-300 transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="text-gray-400 text-xs hover:text-gray-300 transition-colors">Terms of Service</Link>
+            <a href="mailto:contact@willowvibe.com" className="text-gray-400 text-xs hover:text-primary transition-colors font-mono">contact@willowvibe.com</a>
+            <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="text-gray-400 text-xs hover:text-primary transition-colors font-mono">Book a call</a>
           </div>
         </div>
       </div>
