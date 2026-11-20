@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 const title = "Services";
 const description =
-  "Data engineering, PLM and observability services — resilient pipelines, cloud data platforms, migrations and monitoring built for small teams.";
+  "Data engineering and AI on your own data for small teams, with fixed scope and fixed prices. Backed by open-source tools we ship.";
 
 export const metadata: Metadata = {
   title,
