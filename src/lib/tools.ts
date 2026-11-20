@@ -1,0 +1,15 @@
+export const TOOLS = [
+  "Python",
+  "SQL",
+  "dbt",
+  "Apache Airflow",
+  "PostgreSQL",
+  "DuckDB",
+  "BigQuery",
+  "Snowflake",
+  "Docker",
+  "Next.js",
+  "RAG / pgvector",
+  "Teamcenter",
+  "Windchill",
+];
