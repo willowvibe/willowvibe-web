@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
+    "@vercel/functions": "^3.11.3",
     "framer-motion": "^12.34.3",
     "lucide-react": "^0.575.0",
     "next": "^16.4.6",
