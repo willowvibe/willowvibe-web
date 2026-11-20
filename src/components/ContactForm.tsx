@@ -4,15 +4,13 @@ import { CalendarClock, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { track } from "@vercel/analytics";
+import { OFFERS, offerPrefillLabel } from "@/lib/offers";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
-const OFFER_NAMES: Record<string, string> = {
-    "ai-pilot": "AI on your data pilot (from $4,000, 2 weeks)",
-    "pipeline-audit": "Pipeline health audit ($1,500, 1 week)",
-    "data-stack": "Data stack kickoff (from $6,500, 2–3 weeks)",
-    "plm-readiness": "PLM migration readiness check (from $3,000, 1–2 weeks)",
-};
+const OFFER_NAMES: Record<string, string> = Object.fromEntries(
+    OFFERS.map((offer) => [offer.slug, offerPrefillLabel(offer)])
+);
 
 export function ContactForm({ initialMessage = "", offer = "none" }: { initialMessage?: string; offer?: string }) {
     const [status, setStatus] = useState<FormStatus>("idle");
