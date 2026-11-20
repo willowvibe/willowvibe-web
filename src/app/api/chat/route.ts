@@ -1,4 +1,18 @@
 import { NextResponse } from "next/server";
+import { BOOKING_URL } from "@/lib/site";
+import {
+  OFFERS,
+  HOURLY_OPTION,
+  RETAINER_OPTION,
+  OFFERS_PAGE_URL,
+  offerPrice,
+  offerTools,
+} from "@/lib/offers";
+
+const OFFER_LINES = OFFERS.map((offer) => {
+  const tools = offerTools(offer).join(", ");
+  return `- ${offer.name}: ${offerPrice(offer)}, ${offer.duration}. ${offer.audience} Built on ${tools}.`;
+}).join("\n");
 
 // Chat providers: OpenRouter fallback chain plus Ollama Cloud.
 const SYSTEM_PROMPT = `You are the WillowVibe Data Synapse AI assistant. You are helpful, professional, and concise. You represent WillowVibe on their website.
@@ -22,19 +36,30 @@ Products:
 5. Dikshithra Atelier — Client project live e-commerce store at dikshithra.com for kurtis, kurti sets, salwars and office wear
 6. rag-docs-chatbot — Free open-source document Q&A chatbot that answers from documents with page-level citations; live demo at rag-docs-chatbot-three.vercel.app
 7. plm-bom-pipeline — Free open-source PLM analytics pipeline: synthetic BOMs and change control modelled into tested dbt marts
+8. data-pipeline-template — Free open-source data pipeline template
+
+Fixed-price offers:
+${OFFER_LINES}
+- ${HOURLY_OPTION.name}: ${HOURLY_OPTION.price}. ${HOURLY_OPTION.description}
+- ${RETAINER_OPTION.name}: ${RETAINER_OPTION.price} for ${RETAINER_OPTION.duration}. ${RETAINER_OPTION.description}
+
+Fixed quote within 48 hours of a 30-minute call.
+Offers page: ${OFFERS_PAGE_URL}
+Booking link: ${BOOKING_URL}
+Contact: contact@willowvibe.com
 
 Tech stack: AWS, Snowflake, Databricks, Kafka, dbt, Airflow, Teamcenter, 3DEXPERIENCE, CATIA V5, SolidWorks, PostgreSQL, BigQuery, Redshift, Azure, GCP
 
-Contact: contact@willowvibe.com
 Website: www.willowvibe.com
 LinkedIn: /company/willowvibe
 GitHub: github.com/willowvibe
 
 Response rules:
-- Keep answers short and helpful 2 to 4 sentences maximum
-- If someone asks about pricing say it is project-based and suggest contacting the team
-- If someone asks to book or schedule direct them to the contact page
-- Never make up information not in this prompt
+- Keep answers short and helpful, 2 to 4 sentences maximum
+- When a visitor describes a problem or asks about services, prices or working together, recommend the best-fitting offer from the list above and point them to the booking link
+- Distinguish the free open-source tools (PipelineProbe, ObservaKit, rag-docs-chatbot, data-pipeline-template, plm-bom-pipeline) from the paid engagements built on them
+- Never invent prices, clients, metrics or offers that are not listed in this prompt
+- If someone asks to book or schedule, share the booking link
 - Always be warm and professional
 - If a question is unrelated to WillowVibe politely redirect`;
 

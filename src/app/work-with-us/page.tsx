@@ -11,18 +11,10 @@ import {
   Wrench,
 } from "lucide-react";
 import { BOOKING_URL } from "@/lib/site";
+import { OFFERS, type Offer } from "@/lib/offers";
 import { TrackedLink } from "@/components/TrackedLink";
 
-type Offer = {
-  slug: string;
-  name: string;
-  price: string;
-  pricePrefix?: string;
-  duration: string;
-  badge?: string;
-  audience: string;
-  deliverables: string[];
-  builtOn: { label: string; href: string }[];
+type OfferStyle = {
   border: string;
   glow: string;
   accent: string;
@@ -34,26 +26,8 @@ type Offer = {
   ctaColor: string;
 };
 
-const OFFERS: Offer[] = [
-  {
-    slug: "ai-pilot",
-    name: "AI on your data pilot",
-    price: "$4,000",
-    pricePrefix: "From",
-    duration: "2 weeks",
-    badge: "Most requested",
-    audience:
-      "For teams that want answers from their own documents and systems.",
-    deliverables: [
-      "A cited-answer assistant over your documents",
-      "A retrieval-quality eval you can rerun",
-      "Deployment in your cloud or ours",
-      "A handover session",
-    ],
-    builtOn: [
-      { label: "rag-docs-chatbot", href: "https://github.com/willowvibe/rag-docs-chatbot" },
-      { label: "live demo", href: "https://rag-docs-chatbot-three.vercel.app" },
-    ],
+const OFFER_STYLES: Record<string, OfferStyle> = {
+  "ai-pilot": {
     border: "border-cyan-500/30",
     glow: "shadow-[0_0_40px_rgba(34,211,238,0.08)]",
     accent: "from-white/10 to-cyan-950/60",
@@ -64,23 +38,7 @@ const OFFERS: Offer[] = [
     bulletColor: "text-cyan-400",
     ctaColor: "bg-cyan-400 hover:bg-cyan-300 text-black",
   },
-  {
-    slug: "pipeline-audit",
-    name: "Pipeline health audit",
-    price: "$1,500",
-    duration: "1 week",
-    badge: "Best first step",
-    audience:
-      "For teams whose Airflow/dbt pipelines fail, run slowly or can't be trusted.",
-    deliverables: [
-      "A read-only review of Airflow, dbt and the warehouse",
-      "One prioritized written report",
-      "A 1-hour walkthrough call",
-      "A fix plan with estimates",
-    ],
-    builtOn: [
-      { label: "PipelineProbe", href: "https://github.com/willowvibe/pipelineprobe" },
-    ],
+  "pipeline-audit": {
     border: "border-purple-500/30",
     glow: "shadow-[0_0_40px_rgba(168,85,247,0.08)]",
     accent: "from-white/10 to-purple-950/60",
@@ -91,23 +49,7 @@ const OFFERS: Offer[] = [
     bulletColor: "text-purple-400",
     ctaColor: "bg-purple-400 hover:bg-purple-300 text-black",
   },
-  {
-    slug: "data-stack",
-    name: "Data stack kickoff",
-    price: "$6,500",
-    pricePrefix: "From",
-    duration: "2\u20133 weeks",
-    audience: "For teams starting or rebuilding a data platform.",
-    deliverables: [
-      "Ingestion, dbt models and tests",
-      "CI and Docker",
-      "Optional Airflow orchestration",
-      "Data-quality monitoring and docs",
-    ],
-    builtOn: [
-      { label: "data-pipeline-template", href: "https://github.com/willowvibe/data-pipeline-template" },
-      { label: "ObservaKit", href: "https://github.com/willowvibe/ObservaKit" },
-    ],
+  "data-stack": {
     border: "border-amber-500/30",
     glow: "shadow-[0_0_40px_rgba(245,158,11,0.08)]",
     accent: "from-white/10 to-amber-950/60",
@@ -118,23 +60,7 @@ const OFFERS: Offer[] = [
     bulletColor: "text-amber-400",
     ctaColor: "bg-amber-400 hover:bg-amber-300 text-black",
   },
-  {
-    slug: "plm-readiness",
-    name: "PLM migration readiness check",
-    price: "$3,000",
-    pricePrefix: "From",
-    duration: "1\u20132 weeks",
-    audience:
-      "For manufacturers and PLM integrators planning a Windchill or Teamcenter migration.",
-    deliverables: [
-      "Automated BOM and part-data defect checks",
-      "A change-record (ECR/ECO) consistency review",
-      "A defect report sized by severity",
-      "Cleanup recommendations before cutover",
-    ],
-    builtOn: [
-      { label: "plm-bom-pipeline", href: "https://github.com/willowvibe/plm-bom-pipeline" },
-    ],
+  "plm-readiness": {
     border: "border-teal-500/30",
     glow: "shadow-[0_0_40px_rgba(20,184,166,0.08)]",
     accent: "from-white/10 to-teal-950/60",
@@ -145,7 +71,7 @@ const OFFERS: Offer[] = [
     bulletColor: "text-teal-400",
     ctaColor: "bg-teal-400 hover:bg-teal-300 text-black",
   },
-];
+};
 
 const STEPS = [
   {
@@ -166,7 +92,7 @@ const STEPS = [
   },
 ];
 
-function OfferCard({ offer, index }: { offer: Offer; index: number }) {
+function OfferCard({ offer, index }: { offer: Offer & OfferStyle; index: number }) {
   return (
     <motion.article
       initial={{ opacity: 0, y: 40 }}
@@ -291,7 +217,11 @@ export default function WorkWithUsPage() {
         {/* Offers */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {OFFERS.map((offer, index) => (
-            <OfferCard key={offer.slug} offer={offer} index={index} />
+            <OfferCard
+              key={offer.slug}
+              offer={{ ...offer, ...OFFER_STYLES[offer.slug] }}
+              index={index}
+            />
           ))}
         </div>
 
