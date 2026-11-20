@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Server, Quote, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { Server, Clock, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import dynamic from "next/dynamic";
+import { BOOKING_URL } from "@/lib/site";
+import { OFFERS, offerPrice } from "@/lib/offers";
+import { TOOLS } from "@/lib/tools";
+import { TrackedLink } from "@/components/TrackedLink";
 
 const visualPlaceholder = () => <div className="w-full h-48" />;
 
@@ -66,79 +70,101 @@ const PROJECTS: Project[] = [
   },
   {
     id: 4,
-    title: "Enterprise PLM & data migration",
-    tags: ["Teamcenter", "3DEXPERIENCE", "dbt"],
-    stat: "Service",
-    desc: "A capability, not a client result: moving PLM and BOM data out of spreadsheets and into governed pipelines.",
+    title: "plm-bom-pipeline",
+    tags: ["dbt", "DuckDB", "PLM"],
+    stat: "Open source",
+    desc: "A tested PLM analytics pipeline on a synthetic bicycle company: 2,000 parts, five-level BOMs and ECR → ECO → ECN history, with seven seeded data defects each caught by its own dbt test.",
     visual: "slider",
-    link: "/services",
+    link: "https://github.com/willowvibe/plm-bom-pipeline",
   },
 ];
 
-const TESTIMONIALS = [
+const CAPABILITIES = [
   {
-    quote: "We were struggling with scattered data across three different systems — our ERP, our CRM, and a legacy warehouse nobody wanted to touch. WillowVibe built us a single automated pipeline that pulls everything together overnight. Our Monday morning reports now take minutes instead of half a day.",
-    name: "Rajesh Nair",
-    role: "Head of Operations, Bengaluru Logistics Pvt. Ltd.",
-    real: true,
+    id: "ai",
+    illustration: "/analytics.svg",
+    alt: "Analytics illustration for AI on your own data",
+    title: "AI on your own data",
+    description:
+      "Document Q&A with citations, AI integrated into your systems, and retrieval evals you can rerun.",
+    tags: ["RAG", "pgvector", "Evals"],
+    accent: "border-cyan-500/60",
+    glow: "group-hover:shadow-[0_0_25px_rgba(34,211,238,0.25)]",
+    tagColor: "border-cyan-900/50 bg-cyan-950/30 text-cyan-300",
+    iconBg: "bg-cyan-950/30",
+  },
+  {
+    id: "ai-integration",
+    illustration: "/core.svg",
+    alt: "Integration illustration for connecting AI models to existing tools",
+    title: "AI integration",
+    description:
+      "Connect AI models to your existing tools and workflows: assistants on your website or internal tools, AI steps inside your data pipelines, with guardrails, rate limits and evals.",
+    tags: ["LLM APIs", "Guardrails", "Evals"],
+    accent: "border-indigo-500/60",
+    glow: "group-hover:shadow-[0_0_25px_rgba(99,102,241,0.25)]",
+    tagColor: "border-indigo-900/50 bg-indigo-950/30 text-indigo-300",
+    iconBg: "bg-indigo-950/30",
+  },
+  {
+    id: "pipelines",
+    illustration: "/pipe.svg",
+    alt: "Pipeline illustration for data pipelines",
+    title: "Data pipelines",
+    description:
+      "Airflow and dbt builds, pipeline health audits, and data quality and observability.",
+    tags: ["Airflow", "dbt", "Postgres", "BigQuery", "Snowflake"],
+    accent: "border-blue-500/60",
+    glow: "group-hover:shadow-[0_0_25px_rgba(59,130,246,0.25)]",
+    tagColor: "border-blue-900/50 bg-blue-950/30 text-blue-300",
+    iconBg: "bg-blue-950/30",
+  },
+  {
+    id: "plm",
+    illustration: "/team.svg",
+    alt: "Team illustration for PLM data migration",
+    title: "PLM data migration",
+    description:
+      "Windchill and Teamcenter migration readiness, plus BOM and change-record data quality.",
+    tags: ["Windchill", "Teamcenter", "BOM"],
+    accent: "border-purple-500/60",
+    glow: "group-hover:shadow-[0_0_25px_rgba(168,85,247,0.25)]",
+    tagColor: "border-purple-900/50 bg-purple-950/30 text-purple-300",
+    iconBg: "bg-purple-950/30",
+  },
+  {
+    id: "apps",
+    illustration: "/server.svg",
+    alt: "Server illustration for web and data apps",
+    title: "Web and data apps",
+    description:
+      "Dashboards, internal tools and integrations alongside the data work.",
+    tags: ["Next.js", "Python"],
+    accent: "border-teal-500/60",
+    glow: "group-hover:shadow-[0_0_25px_rgba(20,184,166,0.25)]",
+    tagColor: "border-teal-900/50 bg-teal-950/30 text-teal-300",
+    iconBg: "bg-teal-950/30",
   },
 ];
-
 
 function CoreCapabilitiesIDE() {
-  const PILLARS = [
-    {
-      id: "plm",
-      illustration: "/team.svg",
-      title: "Enterprise PLM & CAD",
-      description: "Full-lifecycle PLM architecture, BOM management, change control governance, and production-ready CAD for complex engineering environments.",
-      tags: ["3DEXPERIENCE", "Teamcenter", "CATIA V5", "SolidWorks"],
-      accent: "border-blue-500/60",
-      glow: "group-hover:shadow-[0_0_25px_rgba(59,130,246,0.25)]",
-      tagColor: "border-blue-900/50 bg-blue-950/30 text-blue-300",
-      iconBg: "bg-blue-950/30",
-    },
-    {
-      id: "de",
-      illustration: "/server.svg",
-      title: "Data Engineering & Integration",
-      description: "Resilient cloud lakehouses, automated ETL/ELT pipelines, zero-downtime migrations, and scalable cloud infrastructure on AWS, Azure, and GCP.",
-      tags: ["Snowflake", "Databricks", "Kafka", "dbt", "Airflow"],
-      accent: "border-cyan-500/60",
-      glow: "group-hover:shadow-[0_0_25px_rgba(34,211,238,0.25)]",
-      tagColor: "border-cyan-900/50 bg-cyan-950/30 text-cyan-300",
-      iconBg: "bg-cyan-950/30",
-    },
-    {
-      id: "dta",
-      illustration: "/analytics.svg",
-      title: "Data Trust & Analytics",
-      description: "Data quality automation, governance frameworks, real-time observability, AI infrastructure, and business intelligence dashboards your team will actually trust.",
-      tags: ["Data Quality", "Observability", "AI Infra", "Power BI"],
-      accent: "border-purple-500/60",
-      glow: "group-hover:shadow-[0_0_25px_rgba(168,85,247,0.25)]",
-      tagColor: "border-purple-900/50 bg-purple-950/30 text-purple-300",
-      iconBg: "bg-purple-950/30",
-    },
-  ];
-
   return (
     <div className="w-full max-w-6xl mx-auto px-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {PILLARS.map((pillar, idx) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+        {CAPABILITIES.map((pillar, idx) => (
           <motion.div
             key={pillar.id}
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: idx * 0.15 }}
-            className={`group relative flex flex-col rounded-2xl bg-neutral-900 border ${pillar.accent} ${pillar.glow} transition-all duration-500 overflow-hidden hover:-translate-y-2`}
+            className={`group relative flex flex-col rounded-2xl bg-neutral-900 border ${pillar.accent} ${pillar.glow} transition-all duration-500 overflow-hidden hover:-translate-y-2 ${idx < 2 ? "lg:col-span-3" : "lg:col-span-2"} ${idx === CAPABILITIES.length - 1 ? "md:col-span-2 lg:col-span-2" : ""}`}
           >
             {/* Illustration area */}
             <div className={`w-full flex items-center justify-center p-8 ${pillar.iconBg} border-b border-white/5`}>
               <Image
                 src={pillar.illustration}
-                alt={pillar.title}
+                alt={pillar.alt}
                 width={160}
                 height={160}
                 className="w-40 h-40 object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.1)] group-hover:scale-105 transition-transform duration-500"
@@ -164,11 +190,10 @@ function CoreCapabilitiesIDE() {
                 ))}
               </div>
               <Link
-                href="/services"
+                href="/work-with-us"
                 className={`inline-flex items-center gap-2 text-xs font-mono font-bold px-4 py-2 rounded-lg border-2 ${pillar.tagColor} hover:scale-105 hover:opacity-90 transition-all mt-auto shadow-sm`}
               >
-                Explore service <ArrowRight size={12} />
-                <span className="sr-only"> {pillar.title}</span>
+                Explore {pillar.title} <ArrowRight size={12} />
               </Link>
             </div>
 
@@ -262,20 +287,37 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            
+
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
               className="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-4 md:mb-6 tracking-tight">
-              Trusted data. Smarter products. Faster decisions.
+              Data engineering and AI on your own data.{" "}
+              <span className="block bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                Fixed scope, fixed price.
+              </span>
             </motion.h1>
-            
+
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
               className="text-sm md:text-lg text-gray-300 mb-6 md:mb-8 leading-relaxed font-light">
-              Your product data, your pipeline data, and your analytics data all live in different silos — and that&apos;s costing you. WillowVibe connects the dots. We engineer the systems that make your product lifecycle, data pipelines, and business intelligence work as one.
+              Pipelines, document Q&amp;A and PLM data work for small teams. Every engagement is built on open-source tools we&apos;ve shipped, so you can inspect the work first.
             </motion.p>
-            
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }}>
-              <Link href="/contact" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-cyan-400 text-black font-bold rounded-lg hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)] text-sm">
-                Start a Project <ArrowRight size={16} />
+
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }}
+              className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+              <TrackedLink
+                href={BOOKING_URL}
+                event="book_call_click"
+                props={{ location: "home-hero" }}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 md:px-6 md:py-3 bg-cyan-400 text-black font-bold rounded-lg hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)] text-sm"
+              >
+                Book a 30-minute call <ArrowRight size={16} />
+              </TrackedLink>
+              <Link
+                href="/work-with-us"
+                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 md:px-6 md:py-3 border border-white/15 text-gray-200 font-bold rounded-lg hover:border-cyan-400 hover:text-white hover:scale-105 transition-all text-sm"
+              >
+                See the offers
               </Link>
             </motion.div>
           </div>
@@ -300,9 +342,12 @@ export default function Home() {
 
       {/* 2. TRUST TICKER */}
       <section className="w-full border-y border-white/5 bg-white/[0.02] py-2 md:py-3 overflow-hidden">
+        <p className="text-center text-[10px] md:text-xs font-mono uppercase tracking-widest text-gray-400 mb-2">
+          Tools we work with
+        </p>
         <div className="w-full relative flex overflow-hidden">
           <div className="marquee flex w-max gap-6 md:gap-24 whitespace-nowrap px-4 md:px-12">
-            {["AWS", "SNOWFLAKE", "DATABRICKS", "KAFKA", "DBT", "AIRFLOW", "TEAMCENTER", "WINDCHILL", "BOM MANAGEMENT", "VARIANT CONFIGURATION", "CHANGE CONTROL", "ENOVIA", "AWS", "SNOWFLAKE", "DATABRICKS", "KAFKA", "DBT", "AIRFLOW", "TEAMCENTER", "WINDCHILL", "BOM MANAGEMENT", "VARIANT CONFIGURATION", "CHANGE CONTROL", "ENOVIA"].map((tech, i) => (
+            {[...TOOLS, ...TOOLS].map((tech, i) => (
               <span key={i} className="text-[10px] md:text-base font-mono font-bold text-gray-400 tracking-widest uppercase">{tech}</span>
             ))}
           </div>
@@ -317,6 +362,55 @@ export default function Home() {
           <div className="h-0.5 w-16 bg-cyan-400 mx-auto" />
         </div>
         <CoreCapabilitiesIDE />
+      </section>
+
+      {/* 4b. FIXED-SCOPE ENGAGEMENTS */}
+      <section className="w-full max-w-7xl mx-auto px-4 py-8 md:py-20 border-b border-white/5">
+        <div className="text-center mb-6 md:mb-12">
+          <h2 className="text-xl md:text-3xl font-extrabold mb-3 tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">Fixed-scope engagements</h2>
+          <div className="h-0.5 w-16 bg-cyan-400 mx-auto" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
+          {OFFERS.map((offer, index) => (
+            <motion.div
+              key={offer.slug}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.08 }}
+            >
+              <Link
+                href="/work-with-us"
+                aria-label={`${offer.name}: ${offerPrice(offer)}, ${offer.duration}. ${offer.audience}`}
+                className="group flex h-full flex-col rounded-xl bg-neutral-900 border border-white/10 p-5 hover:border-cyan-400/40 transition-colors"
+              >
+                <h3 className="text-base md:text-lg font-bold text-white leading-snug mb-2">
+                  {offer.name}
+                </h3>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3">
+                  <span className="text-lg font-extrabold text-white">{offerPrice(offer)}</span>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-mono text-cyan-300">
+                    <Clock size={12} /> {offer.duration}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-grow">
+                  {offer.audience}
+                </p>
+                <span className="inline-flex items-center gap-2 text-xs font-mono font-bold text-cyan-400 group-hover:gap-3 transition-all">
+                  View offer <ArrowRight size={12} />
+                </span>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+        <div className="flex justify-center mt-8">
+          <Link
+            href="/work-with-us"
+            className="inline-flex items-center gap-2 text-sm font-mono font-bold text-cyan-400 hover:gap-3 transition-all"
+          >
+            See all offers and FAQ <ArrowRight size={14} />
+          </Link>
+        </div>
       </section>
 
       {/* 5. FEATURED PROJECTS */}
@@ -386,72 +480,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. TESTIMONIALS — carousel on mobile, grid on desktop */}
-      <section className="w-full max-w-7xl mx-auto px-4 py-8 pb-12 md:py-20 md:pb-28">
-        <div className="text-center mb-6 md:mb-12">
-          <h2 className="text-xl md:text-3xl font-extrabold mb-3 tracking-tight bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">Client Endorsements</h2>
-          <div className="h-0.5 w-16 bg-cyan-400 mx-auto" />
-        </div>
-        <div className="md:hidden flex flex-col gap-4">
-          {TESTIMONIALS.filter(t => t.real).map((testimonial, index) => (
-            <div key={index} className="relative p-4 rounded-xl bg-neutral-900 border border-neutral-700">
-              <Quote className="absolute top-3 right-3 w-6 h-6 text-cyan-400/10 rotate-180" />
-              <div className="flex gap-1 mb-2">
-                {[...Array(5)].map((_, i) => (
-                  <svg key={i} className="w-3 h-3 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
-              </div>
-              <p className="text-gray-300 text-sm leading-relaxed italic mb-3">&ldquo;{testimonial.quote}&rdquo;</p>
-              <div className="border-t border-neutral-700 pt-3">
-                <h3 className="text-white font-bold text-sm">{testimonial.name}</h3>
-                <p className="text-cyan-400 text-xs font-mono mt-0.5">{testimonial.role}</p>
-              </div>
-            </div>
-          ))}
-          <div className="flex flex-col items-center justify-center p-6 rounded-xl border border-dashed border-white/10 bg-white/[0.02] gap-4 text-center">
-            <Image
-              src="/endorse.svg"
-              alt="More endorsements coming"
-              width={128}
-              height={128}
-              className="w-32 h-32 object-contain opacity-70"
-            />
-            <p className="text-gray-400 text-sm leading-relaxed">
-              We are collecting feedback from our clients. Real stories, real results — coming soon.
+      {/* 6. FINAL CTA */}
+      <section className="w-full max-w-7xl mx-auto px-4 py-8 md:py-20">
+        <div className="relative overflow-hidden rounded-2xl bg-neutral-900 border border-white/10 p-6 md:p-12 text-center">
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none" />
+          <div className="relative z-10">
+            <h2 className="text-xl md:text-3xl font-extrabold mb-3 tracking-tight bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+              Not sure which fits?
+            </h2>
+            <p className="text-gray-300 text-sm md:text-base leading-relaxed max-w-xl mx-auto mb-6">
+              Book a 30-minute call and get a fixed quote within 48 hours.
             </p>
+            <TrackedLink
+              href={BOOKING_URL}
+              event="book_call_click"
+              props={{ location: "home-footer-cta" }}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-400 text-black font-bold rounded-xl hover:scale-105 transition-all text-sm shadow-[0_0_25px_rgba(34,211,238,0.3)]"
+            >
+              Book a 30-minute call <ArrowRight size={15} />
+            </TrackedLink>
           </div>
-        </div>
-        <div className="hidden md:grid md:grid-cols-3 gap-6">
-          {/* Real testimonial — Rajesh Nair */}
-          {TESTIMONIALS.filter(t => t.real).map((testimonial, index) => (
-            <motion.div key={index} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
-              className="relative p-6 rounded-xl bg-neutral-900 border border-neutral-700 hover:border-cyan-400/30 transition-colors flex flex-col">
-              <Quote className="absolute top-4 right-4 w-8 h-8 text-cyan-400/10 rotate-180" />
-              <div className="flex gap-1 mb-3">{[...Array(5)].map((_, i) => (<svg key={i} className="w-3 h-3 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>))}</div>
-              <p className="text-gray-300 text-sm leading-relaxed italic mb-4 flex-grow">&ldquo;{testimonial.quote}&rdquo;</p>
-              <div className="border-t border-neutral-700 pt-3">
-                <h3 className="text-white font-bold text-sm">{testimonial.name}</h3>
-                <p className="text-cyan-400 text-xs font-mono mt-0.5">{testimonial.role}</p>
-              </div>
-            </motion.div>
-          ))}
-
-          {/* Coming soon block — spans 2 columns */}
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 }}
-            className="md:col-span-2 relative rounded-xl border border-dashed border-white/10 bg-white/[0.02] flex flex-col items-center justify-center p-8 gap-5 text-center">
-            <Image
-              src="/endorse.svg"
-              alt="More endorsements coming"
-              width={192}
-              height={192}
-              className="w-48 h-48 object-contain opacity-70"
-            />
-            <p className="text-gray-300 text-base font-medium leading-relaxed max-w-sm">
-              We are collecting feedback from our clients. Real stories, real results — coming soon.
-            </p>
-          </motion.div>
         </div>
       </section>
 

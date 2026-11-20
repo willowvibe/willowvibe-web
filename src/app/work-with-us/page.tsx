@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import {
   ArrowRight,
   CheckCircle,
+  ChevronDown,
   Clock,
   ExternalLink,
   Globe,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 import { BOOKING_URL } from "@/lib/site";
 import { OFFERS, type Offer } from "@/lib/offers";
+import { FAQ } from "@/lib/faq";
 import { TrackedLink } from "@/components/TrackedLink";
 
 type OfferStyle = {
@@ -335,6 +337,45 @@ export default function WorkWithUsPage() {
                   {step.desc}
                 </p>
               </motion.div>
+            ))}
+          </div>
+        </motion.section>
+
+        {/* FAQ */}
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mt-16 md:mt-24"
+        >
+          <div className="text-center mb-8 md:mb-10">
+            <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-2">
+              Frequently asked questions
+            </h2>
+            <p className="text-gray-400 text-sm md:text-base max-w-xl mx-auto">
+              The practical details before we start.
+            </p>
+          </div>
+
+          <div className="max-w-3xl mx-auto flex flex-col gap-3">
+            {FAQ.map((item) => (
+              <details
+                key={item.question}
+                className="group rounded-xl bg-neutral-900 border border-white/10 open:border-cyan-400/40 transition-colors"
+              >
+                <summary className="flex items-center justify-between gap-4 cursor-pointer list-none px-5 py-4 text-sm md:text-base font-semibold text-white [&::-webkit-details-marker]:hidden">
+                  <span>{item.question}</span>
+                  <ChevronDown
+                    size={18}
+                    aria-hidden="true"
+                    className="flex-shrink-0 text-cyan-300 transition-transform duration-300 group-open:rotate-180"
+                  />
+                </summary>
+                <p className="px-5 pb-5 text-sm text-gray-300 leading-relaxed">
+                  {item.answer}
+                </p>
+              </details>
             ))}
           </div>
         </motion.section>

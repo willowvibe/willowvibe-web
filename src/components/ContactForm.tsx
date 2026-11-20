@@ -49,8 +49,8 @@ export function ContactForm({ initialMessage = "", offer = "none" }: { initialMe
             </div>
 
             <div className="relative z-10 w-full">
-                <h2 className="text-xl md:text-3xl font-bold text-white mb-1">Connect with us</h2>
-                <p className="text-gray-400 text-xs md:text-sm mb-5 md:mb-8">Reach out to discuss your data engineering needs.</p>
+                <h2 className="text-xl md:text-3xl font-bold text-white mb-1">Send a message</h2>
+                <p className="text-gray-400 text-xs md:text-sm mb-5 md:mb-8">Tell us about your project and we&apos;ll reply within one business day.</p>
 
                 {status === "success" ? (
                     <div className="flex flex-col items-center justify-center py-10 text-center gap-4">
@@ -59,7 +59,7 @@ export function ContactForm({ initialMessage = "", offer = "none" }: { initialMe
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-white mb-1">Message Sent!</h3>
-                            <p className="text-gray-400 text-sm">Thank you. We&apos;ll get back to you within 24 hours.</p>
+                            <p className="text-gray-400 text-sm">Thank you. We&apos;ll get back to you within one business day.</p>
                         </div>
                         <button onClick={() => setStatus("idle")} className="text-xs text-primary font-mono hover:underline mt-2">Send another message</button>
                     </div>
