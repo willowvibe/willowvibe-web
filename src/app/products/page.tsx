@@ -31,7 +31,7 @@ const PRODUCTS: Product[] = [
   {
     id: 1,
     name: "ObservaKit",
-    tagline: "Enterprise data observability — free, self-hosted, under 10 minutes.",
+    tagline: "Data observability for small teams — free, self-hosted, running in under 10 minutes.",
     description: "ObservaKit gives 1 to 5 person data teams the same observability pillars that enterprise teams rely on — commercial platforms typically charge five figures annually — running entirely on your own infrastructure. No vendor lock-in, no data leaving your systems.",
     illustration: "/maintain.svg",
     category: "Data Observability",

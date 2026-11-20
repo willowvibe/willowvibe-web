@@ -193,7 +193,7 @@ export default function ServicesPage() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="text-gray-300 text-sm md:text-base leading-relaxed max-w-sm"
             >
-              Cutting-edge distributed systems with robust engineering designed to scale with your business.
+              Data pipelines, AI on your own data and PLM data work for small teams, each backed by open-source tools we&apos;ve shipped.
             </motion.p>
           </div>
 

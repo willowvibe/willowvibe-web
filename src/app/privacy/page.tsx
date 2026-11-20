@@ -7,7 +7,8 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "/privacy" },
-  openGraph: { title, description, url: "/privacy" },
+  openGraph: { title: `${title} | WillowVibe Data Synapse`, description, url: "/privacy" },
+  twitter: { title: `${title} | WillowVibe Data Synapse`, description },
 };
 export default function PrivacyPage() {
     return (

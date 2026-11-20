@@ -3,6 +3,7 @@
 import { CalendarClock, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { track } from "@vercel/analytics";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
@@ -13,7 +14,7 @@ const OFFER_NAMES: Record<string, string> = {
     "plm-readiness": "PLM migration readiness check (from $3,000, 1–2 weeks)",
 };
 
-export function ContactForm({ initialMessage = "" }: { initialMessage?: string }) {
+export function ContactForm({ initialMessage = "", offer = "none" }: { initialMessage?: string; offer?: string }) {
     const [status, setStatus] = useState<FormStatus>("idle");
     const [errorMessage, setErrorMessage] = useState("");
     const [form, setForm] = useState({ name: "", email: "", phone: "", message: initialMessage });
@@ -34,6 +35,7 @@ export function ContactForm({ initialMessage = "" }: { initialMessage?: string }
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Something went wrong.");
+            track("contact_submit", { offer });
             setStatus("success");
             setForm({ name: "", email: "", phone: "", message: "" });
         } catch (err: unknown) {
@@ -113,5 +115,5 @@ export function ContactFormWithOffer() {
             : `I'd like to book a call about the "${offer}" offer.`
         : "";
 
-    return <ContactForm initialMessage={offerMessage} />;
+    return <ContactForm initialMessage={offerMessage} offer={offer ?? "none"} />;
 }

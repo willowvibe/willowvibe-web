@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Database, Mail, Linkedin, ArrowRight, Github } from "lucide-react";
 import { BOOKING_URL } from "@/lib/site";
+import { TrackedLink } from "@/components/TrackedLink";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -85,7 +86,7 @@ export function Footer() {
             <Link href="/privacy" className="text-gray-400 text-xs hover:text-gray-300 transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="text-gray-400 text-xs hover:text-gray-300 transition-colors">Terms of Service</Link>
             <a href="mailto:contact@willowvibe.com" className="text-gray-400 text-xs hover:text-primary transition-colors font-mono">contact@willowvibe.com</a>
-            <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="text-gray-400 text-xs hover:text-primary transition-colors font-mono">Book a call</a>
+            <TrackedLink href={BOOKING_URL} event="book_call_click" props={{ location: "footer" }} target="_blank" rel="noopener noreferrer" className="text-gray-400 text-xs hover:text-primary transition-colors font-mono">Book a call</TrackedLink>
           </div>
         </div>
       </div>

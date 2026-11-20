@@ -2,6 +2,7 @@ import { Mail, Linkedin, CalendarClock } from "lucide-react";
 import { Suspense } from "react";
 import { BOOKING_URL } from "@/lib/site";
 import { ContactForm, ContactFormWithOffer } from "@/components/ContactForm";
+import { TrackedLink } from "@/components/TrackedLink";
 
 export default function ContactPage() {
     return (
@@ -20,16 +21,16 @@ export default function ContactPage() {
                     </div>
 
                     <div className="space-y-3 md:space-y-4">
-                        <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer"
+                        <TrackedLink href={BOOKING_URL} event="book_call_click" props={{ location: "contact" }} target="_blank" rel="noopener noreferrer"
                             className="flex items-center gap-3 md:gap-4 group p-3 md:p-4 rounded-lg bg-white/5 border border-white/10 hover:border-primary/50 hover:bg-white/10 transition-all">
                             <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-black flex items-center justify-center border border-white/20 group-hover:border-primary group-hover:shadow-[0_0_15px_rgba(0,240,255,0.4)] transition-all flex-shrink-0">
                                 <CalendarClock className="w-4 h-4 md:w-5 md:h-5 text-gray-300 group-hover:text-primary" />
                             </div>
                             <div>
-                                <div className="text-xs font-mono text-gray-500 mb-0.5">BOOK_A_CALL</div>
+                                <div className="text-xs font-mono text-gray-400 mb-0.5">BOOK_A_CALL</div>
                                 <div className="text-sm md:text-base font-medium text-white">30-minute intro call</div>
                             </div>
-                        </a>
+                        </TrackedLink>
 
                         <a href="mailto:contact@willowvibe.com"
                             className="flex items-center gap-3 md:gap-4 group p-3 md:p-4 rounded-lg bg-white/5 border border-white/10 hover:border-primary/50 hover:bg-white/10 transition-all">
@@ -37,7 +38,7 @@ export default function ContactPage() {
                                 <Mail className="w-4 h-4 md:w-5 md:h-5 text-gray-300 group-hover:text-primary" />
                             </div>
                             <div>
-                                <div className="text-xs font-mono text-gray-500 mb-0.5">DIRECT_EMAIL</div>
+                                <div className="text-xs font-mono text-gray-400 mb-0.5">DIRECT_EMAIL</div>
                                 <div className="text-sm md:text-base font-medium text-white">contact@willowvibe.com</div>
                             </div>
                         </a>
@@ -48,7 +49,7 @@ export default function ContactPage() {
                                 <Linkedin className="w-4 h-4 md:w-5 md:h-5 text-gray-300 group-hover:text-secondary" />
                             </div>
                             <div>
-                                <div className="text-xs font-mono text-gray-500 mb-0.5">LINKEDIN_PROFILE</div>
+                                <div className="text-xs font-mono text-gray-400 mb-0.5">LINKEDIN_PROFILE</div>
                                 <div className="text-sm md:text-base font-medium text-white">/company/WillowVibe</div>
                             </div>
                         </a>

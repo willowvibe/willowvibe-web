@@ -7,7 +7,8 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "/terms" },
-  openGraph: { title, description, url: "/terms" },
+  openGraph: { title: `${title} | WillowVibe Data Synapse`, description, url: "/terms" },
+  twitter: { title: `${title} | WillowVibe Data Synapse`, description },
 };
 export default function TermsPage() {
     return (

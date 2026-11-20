@@ -8,8 +8,8 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "/about" },
-  openGraph: { title, description, url: "/about" },
-  twitter: { title, description },
+  openGraph: { title: `${title} | WillowVibe Data Synapse`, description, url: "/about" },
+  twitter: { title: `${title} | WillowVibe Data Synapse`, description },
 };
 
 export default function AboutLayout({ children }: { children: React.ReactNode }) {

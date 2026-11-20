@@ -8,8 +8,8 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "/services" },
-  openGraph: { title, description, url: "/services" },
-  twitter: { title, description },
+  openGraph: { title: `${title} | WillowVibe Data Synapse`, description, url: "/services" },
+  twitter: { title: `${title} | WillowVibe Data Synapse`, description },
 };
 
 export default function ServicesLayout({ children }: { children: React.ReactNode }) {
