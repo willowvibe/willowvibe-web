@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import {
   ArrowRight,
   CheckCircle,
@@ -15,6 +12,7 @@ import { BOOKING_URL } from "@/lib/site";
 import { OFFERS, type Offer } from "@/lib/offers";
 import { FAQ } from "@/lib/faq";
 import { TrackedLink } from "@/components/TrackedLink";
+import { Reveal } from "@/components/Reveal";
 
 type OfferStyle = {
   border: string;
@@ -96,11 +94,9 @@ const STEPS = [
 
 function OfferCard({ offer, index }: { offer: Offer & OfferStyle; index: number }) {
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.08 }}
+    <Reveal
+      as="article"
+      delay={index * 80}
       className={`group relative flex flex-col rounded-2xl bg-neutral-900 border ${offer.border} ${offer.glow} overflow-hidden`}
     >
       <div className={`relative p-6 border-b border-white/5 bg-gradient-to-br ${offer.accent}`}>
@@ -175,7 +171,7 @@ function OfferCard({ offer, index }: { offer: Offer & OfferStyle; index: number 
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-    </motion.article>
+    </Reveal>
   );
 }
 
@@ -187,33 +183,24 @@ export default function WorkWithUsPage() {
         {/* Hero */}
         <div className="text-center mb-10 md:mb-16 relative">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-400/10 rounded-full blur-[80px] -z-10 pointer-events-none animate-pulse" />
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl md:text-6xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
+          <h1
+            className="anim-fade-up text-3xl md:text-6xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
           >
             Fixed-scope engagements, fixed prices
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-3xl mx-auto text-gray-300 text-sm md:text-lg leading-relaxed"
+          </h1>
+          <p
+            className="anim-fade-up anim-delay-1 max-w-3xl mx-auto text-gray-300 text-sm md:text-lg leading-relaxed"
           >
             Small data and AI projects with a clear scope, a fixed price and a
             working result. Every offer is backed by open-source tools
             we&apos;ve already built and shipped.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs font-mono"
+          </p>
+          <div
+            className="anim-fade-up anim-delay-2 mt-5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs font-mono"
           >
             <Globe size={12} className="text-cyan-400" />
             Remote, working across US, UK, EU and Australian hours.
-          </motion.div>
+          </div>
         </div>
 
         {/* Offers */}
@@ -244,13 +231,7 @@ export default function WorkWithUsPage() {
         </div>
 
         {/* Need something else */}
-        <motion.section
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mt-16 md:mt-24"
-        >
+        <Reveal as="section" className="mt-16 md:mt-24">
           <div className="relative overflow-hidden rounded-2xl bg-neutral-900 border border-white/10 p-6 md:p-10">
             <div className="absolute -top-20 -right-20 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
             <div className="relative z-10 flex flex-col lg:flex-row lg:items-center gap-8">
@@ -298,16 +279,10 @@ export default function WorkWithUsPage() {
               </TrackedLink>
             </div>
           </div>
-        </motion.section>
+        </Reveal>
 
         {/* How it works */}
-        <motion.section
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mt-16 md:mt-24"
-        >
+        <Reveal as="section" className="mt-16 md:mt-24">
           <div className="text-center mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-2">
               How it works
@@ -319,12 +294,9 @@ export default function WorkWithUsPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {STEPS.map((step, index) => (
-              <motion.div
+              <Reveal
                 key={step.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.08 }}
+                delay={index * 80}
                 className="relative rounded-xl bg-neutral-900 border border-white/10 p-5 hover:border-cyan-400/40 transition-colors"
               >
                 <div className="w-8 h-8 rounded-full bg-cyan-400/10 border border-cyan-400/40 flex items-center justify-center text-cyan-300 text-xs font-mono font-bold mb-3">
@@ -336,19 +308,13 @@ export default function WorkWithUsPage() {
                 <p className="text-xs text-gray-400 leading-relaxed">
                   {step.desc}
                 </p>
-              </motion.div>
+              </Reveal>
             ))}
           </div>
-        </motion.section>
+        </Reveal>
 
         {/* FAQ */}
-        <motion.section
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mt-16 md:mt-24"
-        >
+        <Reveal as="section" className="mt-16 md:mt-24">
           <div className="text-center mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-2">
               Frequently asked questions
@@ -378,7 +344,7 @@ export default function WorkWithUsPage() {
               </details>
             ))}
           </div>
-        </motion.section>
+        </Reveal>
 
       </div>
     </div>
