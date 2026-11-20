@@ -4,7 +4,6 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ChatBotLoader } from "@/components/ChatBotLoader";
-import { MotionProvider } from "@/components/MotionProvider";
 import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -21,7 +20,6 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: SITE_TITLE, template: "%s | WillowVibe Data Synapse" },
   description: SITE_DESCRIPTION,
-  keywords: ["data engineering", "data pipeline", "cloud lakehouse", "ETL ELT", "Snowflake", "Databricks", "AWS data engineering", "WillowVibe"],
   authors: [{ name: "WillowVibe Data Synapse", url: SITE_URL }],
   alternates: { canonical: "/" },
   openGraph: { type: "website", locale: "en_US", url: SITE_URL, siteName: SITE_NAME, title: SITE_TITLE, description: SITE_DESCRIPTION },
@@ -124,12 +122,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-        <MotionProvider>
-          <Navbar />
-          <main id="main" className="pt-16 md:pt-20 min-h-screen">{children}</main>
-          <Footer />
-          <ChatBotLoader />
-        </MotionProvider>
+        <Navbar />
+        <main id="main" className="pt-16 md:pt-20 min-h-screen">{children}</main>
+        <Footer />
+        <ChatBotLoader />
         <Analytics />
       </body>
     </html>

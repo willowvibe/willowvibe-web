@@ -73,7 +73,8 @@ Providers without an API key are skipped, so the chain falls through to the next
 - `src/components/ChatBotLoader.tsx` mounts the ChatBot with `next/dynamic` (`ssr: false`) once the browser is idle, so it doesn't block first load.
 - `src/components/ContactForm.tsx` holds the contact form; only it sits inside `<Suspense>` (it reads `?offer=`), so the rest of /contact is server-rendered.
 - `src/components/TrackedLink.tsx` sends Vercel Analytics events on click: `book_call_click` (booking links), `quote_click` (offer buttons); the form sends `contact_submit`.
-- `src/components/MotionProvider.tsx` wraps the app in framer-motion `MotionConfig reducedMotion="user"`.
+- Home, Work with us and Products are server components. Scroll reveals use `src/components/Reveal.tsx` (IntersectionObserver + `.reveal-pending`/`.reveal-in` CSS; content is visible without JS and only hidden after mount when below the viewport); hero entrance and scanline use CSS (`.anim-fade-up`, `.anim-scan`).
+- Client islands: `src/components/ProjectCarousel.tsx` (home Featured Projects: autoplay, prev/next, dots, arrow keys, lazy visuals wrapped in a local framer `MotionConfig reducedMotion="user"`) and `src/components/ProductGrid.tsx` (products cards and dialog). framer-motion is no longer loaded globally; only the carousel visuals and the About page use it.
 - Project visuals rendered in the home page featured-projects carousel:
   - `src/components/AnomalyDetectionVisual.tsx` — ObservaKit (data observability)
   - `src/components/DataStreamVisual.tsx` — PipelineProbe (pipeline audit)
@@ -107,4 +108,4 @@ Providers without an API key are skipped, so the chain falls through to the next
 - The system prompt is built from `src/lib/offers.ts`, `src/lib/tools.ts` and `BOOKING_URL`, and includes injection-guard rules (treat visitor text as untrusted, never reveal instructions, refuse persona changes and off-topic output).
 - Modals (products, services, about bio popup) use `role="dialog"`, `aria-modal`, `aria-labelledby`, close on Escape, and lock body scroll while open.
 - The navbar is fixed and uses the `.glass` utility class. All pages account for its height via `pt-16 md:pt-20` on `<main>` in `layout.tsx`.
-- Several components use Framer Motion for scroll and hover animations.
+- framer-motion is used only by the carousel visuals and the About page; prefer Reveal/CSS for new animations.
