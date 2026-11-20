@@ -67,7 +67,29 @@ Name, email, phone and message are HTML-escaped before being placed in the email
 
 **File:** `src/app/api/chat/route.ts`
 
-Forwards the conversation to the Anthropic Messages API (model `claude-haiku-5-5`, `max_tokens: 300`) using a server-side system prompt that describes WillowVibe, its services, products and client projects (Doctor App, Cosmic Saju, Dikshithra Atelier) and the contact email contact@willowvibe.com.
+Forwards the conversation to a fallback chain of providers using plain `fetch` and a server-side system prompt that describes WillowVibe, its services, products and client projects (Doctor App, Cosmic Saju, Dikshithra Atelier, rag-docs-chatbot, plm-bom-pipeline) and the contact email contact@willowvibe.com.
+
+### Provider Fallback Chain
+
+Models are tried in order. The next model is attempted on a network error, a non-2xx response, a timeout (~15 s per attempt) or empty text:
+
+1. OpenRouter `inclusionai/ling-3.2-flash:free`
+2. OpenRouter `nvidia/nemotron-3.5-super-vl:free`
+3. Ollama Cloud `glm-5.3-flash`
+
+OpenRouter models are skipped when `OPENROUTER_API_KEY` is unset, and the Ollama model is skipped when `OLLAMA_API_KEY` is unset. If neither key is configured the route logs that and returns the friendly `500` error.
+
+The chain can be overridden with the optional `CHAT_MODELS` environment variable, a comma-separated list of `provider:model` entries (the provider is split on the first colon only):
+
+```bash
+CHAT_MODELS=openrouter:inclusionai/ling-3.2-flash:free,ollama:glm-5.3-flash
+```
+
+Any `<think>...</think>` block is stripped from the model reply before it is returned.
+
+### Rate Limiting
+
+Each IP (the first `x-forwarded-for` address) is limited to `CHAT_RATE_LIMIT_PER_HOUR` requests per rolling hour, default **20**. The counter is an in-memory `Map`, so it is best-effort per serverless instance: it is not shared across instances and resets on cold starts. Requests over the limit receive `429`.
 
 ### Request
 
@@ -100,17 +122,23 @@ Any other shape → `400`. Leading assistant messages are dropped server-side so
 
 **Bad Input (400):**
 ```json
-{ "error": "Invalid messages format." }
+{ "error": "Invalid messages. Send 1 to 20 user/assistant messages with non-empty content." }
+```
+
+**Rate Limited (429):**
+```json
+{ "error": "You've reached the chat limit for now. Please try again later or email contact@willowvibe.com" }
 ```
 
 **Server / Upstream Error (500):**
 ```json
-{ "error": "The assistant is unavailable right now. Please email contact@willowvibe.com and we will get back to you." }
+{ "error": "I am having trouble connecting right now. Please email us at contact@willowvibe.com" }
 ```
 
 ### Implementation Notes
 
-- Requires `ANTHROPIC_API_KEY`; missing key → `500` with a friendly error (logged server-side).
+- Configure `OPENROUTER_API_KEY` and/or `OLLAMA_API_KEY`; if neither is set the route logs it and returns the friendly `500`.
+- Failed attempts are logged server-side with provider, model and status. API keys and user message content are never logged.
 - The API always responds with JSON: `{ reply }` on success, `{ error }` on failure.
-- Raw upstream (Anthropic) error text is never forwarded to the client — failures map to a friendly, generic message.
-- Conversation content is not stored by WillowVibe; it is sent to Anthropic solely to generate a reply.
+- Raw upstream error text is never forwarded to the client — failures map to a friendly, generic message.
+- Conversation content is not stored by WillowVibe; it is sent to the selected provider solely to generate a reply.
