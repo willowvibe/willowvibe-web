@@ -22,13 +22,24 @@ Copy `.env.example` to `.env.local` for local development. Required variables:
 ```
 HOSTINGER_USER=your-email@willowvibe.com
 HOSTINGER_PASSWORD=your-hostinger-password
-ANTHROPIC_API_KEY=your-anthropic-api-key
+OPENROUTER_API_KEY=your-openrouter-api-key
+```
+
+Optional variables:
+
+```
+OLLAMA_API_KEY=your-ollama-cloud-api-key
+CHAT_MODELS=openrouter:inclusionai/ling-3.2-flash:free,ollama:glm-5.3-flash
+CHAT_RATE_LIMIT_PER_HOUR=20
 ```
 
 - `HOSTINGER_USER` / `HOSTINGER_PASSWORD` — required by the contact API (`src/app/api/contact/route.ts`); the transporter is created lazily and the route returns 500 with a server-side log when they are missing.
-- `ANTHROPIC_API_KEY` — required by the chat API (`src/app/api/chat/route.ts`); the route returns 500 when it is missing.
+- `OPENROUTER_API_KEY` — required by the chat API (`src/app/api/chat/route.ts`); it calls OpenRouter free models, with Ollama Cloud as an optional fallback. The route returns 500 only when neither `OPENROUTER_API_KEY` nor `OLLAMA_API_KEY` is set.
+- `OLLAMA_API_KEY` — optional; enables the Ollama Cloud fallback provider.
+- `CHAT_MODELS` — optional comma-separated `<provider>:<model>` chain (providers: `openrouter`, `ollama`) overriding the default model chain. Entries with an unknown provider or missing model are ignored.
+- `CHAT_RATE_LIMIT_PER_HOUR` — optional per-IP requests per rolling hour; defaults to `20`.
 
-These must also be configured in the Vercel dashboard under Project Settings → Environment Variables.
+Providers without an API key are skipped, so the chain falls through to the next configured provider. These must also be configured in the Vercel dashboard under Project Settings → Environment Variables.
 
 > **Note:** The contact API uses Hostinger SMTP (`smtp.hostinger.com:465`), not Gmail. Older documentation may reference Gmail env vars — those are obsolete.
 
@@ -50,14 +61,14 @@ These must also be configured in the Vercel dashboard under Project Settings →
 - `src/app/icon.tsx`, `src/app/apple-icon.tsx`, `src/app/manifest.ts` — generated PNG icons and the web manifest
 - `src/app/logo.png/route.tsx` — 512x512 logo PNG (used as the JSON-LD `logo`)
 - `src/app/api/contact/route.ts` — API route handling contact form submissions via Nodemailer
-- `src/app/api/chat/route.ts` — API route proxying the chat widget to the Anthropic Messages API
+- `src/app/api/chat/route.ts` — API route proxying the chat widget to OpenRouter free models with an optional Ollama Cloud fallback
 - `src/app/layout.tsx` — Root layout: metadata (`metadataBase`, home canonical, OG/Twitter), viewport with themeColor, JSON-LD (Organization, WebSite, ProfessionalService with the four offers), skip-to-content link, Navbar, Footer, `ChatBotLoader` and Vercel `<Analytics />`
 - Every page sets its own `alternates.canonical` and `openGraph`/`twitter` title, description and url (in its `layout.tsx`, or `page.tsx` for privacy/terms); the 404 page is `noindex`
 
 ### Component Patterns
 - Most page-level data (team members, services, projects, products, testimonials) is defined as constants at the top of the respective page file.
 - Interactive components use `"use client"` directive; pages are server components by default.
-- `src/components/ChatBot.tsx` is an AI chat widget backed by Claude through `POST /api/chat` — not rule-based. The hard-coded welcome greeting stays client-side and is never sent to the API; failures render a friendly fallback pointing to contact@willowvibe.com.
+- `src/components/ChatBot.tsx` is an AI chat widget backed by `POST /api/chat` (OpenRouter free models, optional Ollama Cloud fallback) — not rule-based. It shows an offer-led greeting, four quick-reply chips, and renders only allowlisted URLs as clickable links. The hard-coded welcome greeting stays client-side and is never sent to the API; failures render a friendly fallback pointing to contact@willowvibe.com. When the panel opens with only the greeting it scrolls to the top; new messages auto-scroll to the bottom. A "N questions left this hour" note appears when the remaining quota is low.
 - `src/components/ChatBotLoader.tsx` mounts the ChatBot with `next/dynamic` (`ssr: false`) once the browser is idle, so it doesn't block first load.
 - `src/components/ContactForm.tsx` holds the contact form; only it sits inside `<Suspense>` (it reads `?offer=`), so the rest of /contact is server-rendered.
 - `src/components/TrackedLink.tsx` sends Vercel Analytics events on click: `book_call_click` (booking links), `quote_click` (offer buttons); the form sends `contact_submit`.
@@ -88,7 +99,11 @@ These must also be configured in the Vercel dashboard under Project Settings →
 
 ### Important Implementation Details
 - The contact form POSTs to `/api/contact`. The route validates types and length caps (name 100, email 254, phone 40, message 5000), HTML-escapes values before building the email HTML, strips CR/LF from subject values, and returns 400 on invalid JSON or validation failure.
-- The chat route validates input strictly (max 20 messages, roles `user`/`assistant` only, content 1–2000 chars, leading assistant messages dropped so the conversation starts with a user turn) and always answers with JSON — `{ reply }` on success, `{ error }` with a friendly message on failure (raw upstream errors are never forwarded).
+- The chat route validates input strictly (max 20 messages, roles `user`/`assistant` only, content 1–1000 chars after normalisation, leading assistant messages dropped so the conversation starts with a user turn) and always answers with JSON — `{ reply }` on success, `{ error }` with a friendly message on failure (raw upstream errors are never forwarded).
+- Input normalisation strips control and zero-width characters, collapses runs of blank lines, trims, and forwards only the last 10 messages to the provider.
+- The chat route is rate limited to 20 requests per IP per rolling hour (configurable via `CHAT_RATE_LIMIT_PER_HOUR`). `src/lib/rateLimit.ts` stores hashed-IP timestamps in Vercel Runtime Cache with a per-instance in-memory fallback, and responses carry `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers.
+- `src/lib/chatPolicy.ts` `sanitizeReply` strips think blocks, HTML/script tags, markdown images, and non-allowlisted URLs, then caps replies at 1200 chars (trimming to the last sentence boundary).
+- The system prompt is built from `src/lib/offers.ts`, `src/lib/tools.ts` and `BOOKING_URL`, and includes injection-guard rules (treat visitor text as untrusted, never reveal instructions, refuse persona changes and off-topic output).
 - Modals (products, services, about bio popup) use `role="dialog"`, `aria-modal`, `aria-labelledby`, close on Escape, and lock body scroll while open.
 - The navbar is fixed and uses the `.glass` utility class. All pages account for its height via `pt-16 md:pt-20` on `<main>` in `layout.tsx`.
 - Several components use Framer Motion for scroll and hover animations.
