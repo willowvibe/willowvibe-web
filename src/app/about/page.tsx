@@ -44,6 +44,12 @@ const TEAM = [
   },
 ];
 
+const CARD_LAYOUT = [
+  { position: "md:left-[16%] md:top-[22%]", initial: { opacity: 0, x: -20 }, delay: 0.5 },
+  { position: "md:left-1/2 md:top-[80%] md:-translate-x-1/2", initial: { opacity: 0, y: 20 }, delay: 0.8 },
+  { position: "md:right-[16%] md:top-[22%]", initial: { opacity: 0, x: 20 }, delay: 1.1 },
+];
+
 const THEME: Record<string, {
   border: string;
   glow: string;
@@ -128,7 +134,10 @@ function ArrowHead({ color, points, delay }: { color: string; points: string; de
 function BubbleCard({ member, size = "md" }: { member: typeof TEAM[0]; size?: "md" | "lg" }) {
   const [showBio, setShowBio] = useState(false);
   const t = THEME[member.theme];
-  const diameter = size === "lg" ? 220 : 190;
+  const sizeClasses =
+    size === "lg"
+      ? "w-[190px] h-[190px] md:w-[220px] md:h-[220px]"
+      : "w-[190px] h-[190px]";
 
   useEffect(() => {
     if (!showBio) return;
@@ -158,8 +167,7 @@ function BubbleCard({ member, size = "md" }: { member: typeof TEAM[0]; size?: "m
         }}
         whileHover={{ scale: 1.06 }}
         onClick={() => setShowBio(true)}
-        className={`relative flex flex-col items-center justify-center rounded-full border-2 ${t.border} ${t.glow} ${t.glowHover} ${t.bg} cursor-pointer transition-all duration-300`}
-        style={{ width: diameter, height: diameter }}
+        className={`relative flex flex-col items-center justify-center rounded-full border-2 ${t.border} ${t.glow} ${t.glowHover} ${t.bg} cursor-pointer transition-all duration-300 ${sizeClasses}`}
       >
         {/* Pulsing ring */}
         <motion.div
@@ -246,16 +254,16 @@ export default function AboutPage() {
             transition={{ duration: 0.6 }}
             className="text-3xl md:text-6xl font-extrabold tracking-tight mb-3 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent"
           >
-            The Brains Behind the Data
+            The team behind WillowVibe
           </motion.h1>
         </div>
 
-        {/* 2. Constellation — desktop */}
-        <div className="hidden md:block relative w-full mb-16" style={{ height: "580px" }}>
+        {/* 2. Team constellation — one set of cards, responsive layout */}
+        <div className="relative w-full mb-12 md:mb-16 flex flex-col items-center gap-8 md:block md:h-[580px]">
 
-          {/* Arrows SVG layer */}
+          {/* Arrows SVG layer (desktop only) */}
           <svg
-            className="absolute inset-0 w-full h-full pointer-events-none z-10"
+            className="hidden md:block absolute inset-0 w-full h-full pointer-events-none z-10"
             viewBox="0 0 1000 580"
             preserveAspectRatio="xMidYMid meet"
           >
@@ -285,14 +293,14 @@ export default function AboutPage() {
           </svg>
 
           {/* Center illustration */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+          <div className="relative md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-20">
             <MotionImage
               src="/team-3.svg"
               alt="WillowVibe team"
               width={288}
               height={288}
               unoptimized
-              className="w-72 h-72 object-contain drop-shadow-[0_0_30px_rgba(34,211,238,0.15)]"
+              className="w-56 h-56 md:w-72 md:h-72 object-contain drop-shadow-[0_0_30px_rgba(34,211,238,0.15)]"
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -300,62 +308,20 @@ export default function AboutPage() {
             />
           </div>
 
-          {/* Harish bubble — closer to left figure */}
-          <div className="absolute z-30" style={{ left: "16%", top: "22%" }}>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-            >
-              <BubbleCard member={TEAM[0]} size="md" />
-            </motion.div>
-          </div>
-
-          {/* Sruthi bubble — closer below the illustration */}
-          <div className="absolute z-30" style={{ left: "50%", top: "80%", transform: "translateX(-50%)" }}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-            >
-              <BubbleCard member={TEAM[1]} size="lg" />
-            </motion.div>
-          </div>
-
-          {/* Pawan bubble — closer to right figure */}
-          <div className="absolute z-30" style={{ right: "16%", top: "22%" }}>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 1.1 }}
-            >
-              <BubbleCard member={TEAM[2]} size="md" />
-            </motion.div>
-          </div>
-
-        </div>
-
-        {/* Mobile stacked */}
-        <div className="md:hidden flex flex-col items-center gap-8 mb-12">
-          <MotionImage
-            src="/team-3.svg"
-            alt="WillowVibe team"
-            width={224}
-            height={224}
-            unoptimized
-            className="w-56 h-56 object-contain"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7 }}
-          />
-          <div className="flex flex-wrap justify-center gap-6">
-            {TEAM.map((member) => (
-              <BubbleCard key={member.id} member={member} size="md" />
-            ))}
-          </div>
+          {TEAM.map((member, idx) => {
+            const layout = CARD_LAYOUT[idx];
+            return (
+              <div key={member.id} className={`md:absolute md:z-30 ${layout.position}`}>
+                <motion.div
+                  initial={layout.initial}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  transition={{ duration: 0.6, delay: layout.delay }}
+                >
+                  <BubbleCard member={member} size={member.id === 2 ? "lg" : "md"} />
+                </motion.div>
+              </div>
+            );
+          })}
         </div>
 
         {/* 3. Story */}
@@ -369,21 +335,25 @@ export default function AboutPage() {
           <p className="text-gray-300 leading-relaxed text-sm md:text-lg font-light">
             We are a family-founded team of engineers, testers, and consultants. We started WillowVibe because we saw businesses drowning in messy, unreliable data. As a tight-knit founding team we handle the technical heavy lifting — from data pipelines and cloud infrastructure to PLM systems and business intelligence — so you can focus on your business with absolute peace of mind.
           </p>
+          <p className="text-gray-400 leading-relaxed text-sm md:text-base font-light mt-4">
+            Based in Bengaluru, India and Hilter, Germany, working remotely across US, UK, EU and Australian hours.
+          </p>
         </motion.div>
 
-        {/* 4. Operating Principles */}
+        {/* 4. How We Work */}
         <div className="mb-12 md:mb-20">
           <div className="text-center mb-6 md:mb-10">
             <h2 className="text-xl md:text-3xl font-bold mb-3 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-              Operating Principles
+              How we work
             </h2>
             <div className="h-0.5 w-16 bg-cyan-400 mx-auto" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: "Radical Transparency", desc: "No black boxes. Every pipeline and decision fully documented." },
-              { title: "Fixed Quotes", desc: "A fixed scope and price within 48 hours of a 30-minute call." },
-              { title: "Agile Execution", desc: "Rapid iteration and reliable deployments that adapt to your needs." },
+              { title: "Fixed quotes", desc: "A fixed scope and price within 48 hours of a 30-minute call." },
+              { title: "Weekly demos", desc: "You see working software every week, not just status updates." },
+              { title: "You own the code", desc: "Everything we build transfers to you when the final invoice is paid." },
+              { title: "NDA first", desc: "We sign a mutual NDA before touching your data or systems." },
             ].map((val, idx) => (
               <motion.div
                 key={idx}

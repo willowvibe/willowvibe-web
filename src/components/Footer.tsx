@@ -13,11 +13,11 @@ const NAV_LINKS = [
 ];
 
 const SERVICE_LINKS = [
-  { label: "Data Pipeline Development" },
-  { label: "Cloud Engineering" },
-  { label: "Data Migration" },
-  { label: "AI Infrastructure" },
-  { label: "Business Intelligence" },
+  { label: "AI on your own data" },
+  { label: "AI integration" },
+  { label: "Data pipelines" },
+  { label: "PLM data migration" },
+  { label: "Web and data apps" },
 ];
 
 export function Footer() {
@@ -36,7 +36,7 @@ export function Footer() {
               </div>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed max-w-sm mb-5">
-              Your dedicated data engineering team. We eliminate data silos, automate complex pipelines, and build resilient cloud lakehouses.
+              Data engineering and AI on your own data, with fixed scope and fixed prices. Built on open-source tools we ship.
             </p>
             <div className="flex items-center gap-3">
               <a href="mailto:contact@willowvibe.com" className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary/50 transition-all" aria-label="Email">
@@ -69,7 +69,7 @@ export function Footer() {
             <ul className="space-y-2.5">
               {SERVICE_LINKS.map((link) => (
                 <li key={link.label}>
-                  <Link href="/services" className="text-gray-400 text-sm hover:text-primary transition-colors flex items-center gap-1.5 group">
+                  <Link href="/work-with-us" className="text-gray-400 text-sm hover:text-primary transition-colors flex items-center gap-1.5 group">
                     <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />{link.label}
                   </Link>
                 </li>
